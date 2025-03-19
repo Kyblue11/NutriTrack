@@ -189,7 +189,7 @@ fun loadCSV(context: Context): List<UserData> {
                         UserData(
                             phoneNumber = tokens[0].trim().removePrefix("\""),
                             userId = tokens[1].trim(),
-
+                            sex = tokens[2].trim(),
                             HEIFAtotalscoreMale = tokens[3].toDoubleOrNull() ?: 0.0,
                             HEIFAtotalscoreFemale = tokens[4].toDoubleOrNull() ?: 0.0,
                             discretionaryHEIFAscoreMale = tokens[5].toDoubleOrNull() ?: 0.0,
@@ -230,7 +230,7 @@ fun loadCSV(context: Context): List<UserData> {
 data class UserData(
     val phoneNumber: String,
     val userId: String,
-
+    val sex : String,
     val HEIFAtotalscoreMale: Double,
     val HEIFAtotalscoreFemale: Double,
     val discretionaryHEIFAscoreMale: Double,

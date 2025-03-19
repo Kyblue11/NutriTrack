@@ -48,9 +48,9 @@ class HomeActivity : ComponentActivity() {
         val sp = getSharedPreferences("NutriTrackPrefs", MODE_PRIVATE)
         val userId = intent.getStringExtra("userId") ?: sp.getString("userId", "Guest") ?: "Guest"
         val records = loadCSV(this)
-        val matchedRow = records.find { it.userId == userId }
-        val scoreToShow = matchedRow?.let { row ->
-            if (row.HEIFAtotalscoreFemale == 0.0) {
+        val userRecord = records.find { it.userId == userId }
+        val scoreToShow = userRecord?.let { row ->
+            if (row.sex == "Male") {
                 row.HEIFAtotalscoreMale
             } else {
                 row.HEIFAtotalscoreFemale
@@ -67,15 +67,11 @@ class HomeActivity : ComponentActivity() {
                         startActivity(intent)
                     },
                     onNavigateInsights = {
-//                        val intent = Intent(this, InsightsActivity::class.java)
-//                        startActivity(intent)
+                        val intent = Intent(this, InsightsActivity::class.java)
+                        startActivity(intent)
                     },
-                    onNavigateNutriCoach = {
-                        // Future or placeholder
-                    },
-                    onNavigateSettings = {
-                        // Future or placeholder
-                    }
+                    onNavigateNutriCoach = {  },
+                    onNavigateSettings = {  }
                 )
             }
         }
@@ -95,7 +91,11 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "My Dashboard") },
+                title = { Text(
+                    text = "My Dashboard",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold
+                    )
+                ) },
                 navigationIcon = {
                     IconButton(onClick = { /* handle nav drawer or back? */ }) {
                         Icon(
