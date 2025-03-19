@@ -60,35 +60,7 @@ fun FoodIntakeQuestionnaireScreen() {
 
     // get all the data from the previous activity
     val activity = context as? Activity
-    val phoneNumber = activity?.intent?.getStringExtra("phoneNumber") ?: "N/A"
     val userId = activity?.intent?.getStringExtra("userId") ?: "Guest"
-    val sex = activity?.intent?.getStringExtra("sex") ?: "Unknown"
-    val HEIFAtotalscoreMale = activity?.intent?.getDoubleExtra("HEIFAtotalscoreMale", 0.0) ?: 0.0
-    val HEIFAtotalscoreFemale = activity?.intent?.getDoubleExtra("HEIFAtotalscoreFemale", 0.0) ?: 0.0
-    val discretionaryHEIFAscoreMale = activity?.intent?.getDoubleExtra("discretionaryHEIFAscoreMale", 0.0) ?: 0.0
-    val discretionaryHEIFAscoreFemale = activity?.intent?.getDoubleExtra("discretionaryHEIFAscoreFemale", 0.0) ?: 0.0
-    val vegetablesHEIFAscoreMale = activity?.intent?.getDoubleExtra("vegetablesHEIFAscoreMale", 0.0) ?: 0.0
-    val vegetablesHEIFAscoreFemale = activity?.intent?.getDoubleExtra("vegetablesHEIFAscoreFemale", 0.0) ?: 0.0
-    val fruitHEIFAscoreMale = activity?.intent?.getDoubleExtra("fruitHEIFAscoreMale", 0.0) ?: 0.0
-    val fruitHEIFAscoreFemale = activity?.intent?.getDoubleExtra("fruitHEIFAscoreFemale", 0.0) ?: 0.0
-    val grainsAndCerealsHEIFAscoreMale = activity?.intent?.getDoubleExtra("grainsAndCerealsHEIFAscoreMale", 0.0) ?: 0.0
-    val grainsAndCerealsHEIFAscoreFemale = activity?.intent?.getDoubleExtra("grainsAndCerealsHEIFAscoreFemale", 0.0) ?: 0.0
-    val wholegrainsHEIFAscoreMale = activity?.intent?.getDoubleExtra("wholegrainsHEIFAscoreMale", 0.0) ?: 0.0
-    val wholegrainsHEIFAscoreFemale = activity?.intent?.getDoubleExtra("wholegrainsHEIFAscoreFemale", 0.0) ?: 0.0
-    val meatAndAlternativesHEIFAscoreMale = activity?.intent?.getDoubleExtra("meatAndAlternativesHEIFAscoreMale", 0.0) ?: 0.0
-    val meatAndAlternativesHEIFAscoreFemale = activity?.intent?.getDoubleExtra("meatAndAlternativesHEIFAscoreFemale", 0.0) ?: 0.0
-    val dairyAndAlternativesHEIFAscoreMale = activity?.intent?.getDoubleExtra("dairyAndAlternativesHEIFAscoreMale", 0.0) ?: 0.0
-    val dairyAndAlternativesHEIFAscoreFemale = activity?.intent?.getDoubleExtra("dairyAndAlternativesHEIFAscoreFemale", 0.0) ?: 0.0
-    val sodiumHEIFAscoreMale = activity?.intent?.getDoubleExtra("sodiumHEIFAscoreMale", 0.0) ?: 0.0
-    val sodiumHEIFAscoreFemale = activity?.intent?.getDoubleExtra("sodiumHEIFAscoreFemale", 0.0) ?: 0.0
-    val alcoholHEIFAscoreMale = activity?.intent?.getDoubleExtra("alcoholHEIFAscoreMale", 0.0) ?: 0.0
-    val alcoholHEIFAscoreFemale = activity?.intent?.getDoubleExtra("alcoholHEIFAscoreFemale", 0.0) ?: 0.0
-    val waterHEIFAscoreMale = activity?.intent?.getDoubleExtra("waterHEIFAscoreMale", 0.0) ?: 0.0
-    val waterHEIFAscoreFemale = activity?.intent?.getDoubleExtra("waterHEIFAscoreFemale", 0.0) ?: 0.0
-    val sugarHEIFAscoreMale = activity?.intent?.getDoubleExtra("sugarHEIFAscoreMale", 0.0) ?: 0.0
-    val sugarHEIFAscoreFemale = activity?.intent?.getDoubleExtra("sugarHEIFAscoreFemale", 0.0) ?: 0.0
-    val unsaturatedFatHEIFAscoreMale = activity?.intent?.getDoubleExtra("unsaturatedFatHEIFAscoreMale", 0.0) ?: 0.0
-    val unsaturatedFatHEIFAscoreFemale = activity?.intent?.getDoubleExtra("unsaturatedFatHEIFAscoreFemale", 0.0) ?: 0.0
 
     // get previous states from SharedPreferences (different users)
     var fruits by remember { mutableStateOf(sharedPreferences.getBoolean("${userId}_fruits", false)) }
@@ -243,15 +215,11 @@ fun FoodIntakeQuestionnaireScreen() {
                         putString("${userId}_sleepTime", sleepTime)
                         putString("${userId}_wakeTime", wakeTime)
 
-                        putString("phoneNumber", phoneNumber)
                         putString("userId", userId)
-                        putString("sex", sex)
-                        putString("HEIFAtotalscoreMale", HEIFAtotalscoreMale.toString())
-                        putString("HEIFAtotalscoreFemale", HEIFAtotalscoreFemale.toString())
                         apply()
                     }
 
-                    val intent = Intent(context, LoginActivity::class.java)
+                    val intent = Intent(context, HomeActivity::class.java)
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth()

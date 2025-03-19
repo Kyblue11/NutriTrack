@@ -156,35 +156,7 @@ fun LoginScreen(userData: List<UserData>) {
                         Toast.makeText(context, "Login Successful", Toast.LENGTH_LONG).show()
 
                         val intent = Intent(context, DashboardActivity::class.java).apply {
-                            putExtra("phoneNumber", matchedUser.phoneNumber)
                             putExtra("userId", matchedUser.userId)
-                            putExtra("sex", matchedUser.sex)
-                            putExtra("HEIFAtotalscoreMale", matchedUser.HEIFAtotalscoreMale)
-                            putExtra("HEIFAtotalscoreFemale", matchedUser.HEIFAtotalscoreFemale)
-                            putExtra("discretionaryHEIFAscoreMale", matchedUser.discretionaryHEIFAscoreMale)
-                            putExtra("discretionaryHEIFAscoreFemale", matchedUser.discretionaryHEIFAscoreFemale)
-                            putExtra("vegetablesHEIFAscoreMale", matchedUser.vegetablesHEIFAscoreMale)
-                            putExtra("vegetablesHEIFAscoreFemale", matchedUser.vegetablesHEIFAscoreFemale)
-                            putExtra("fruitHEIFAscoreMale", matchedUser.fruitHEIFAscoreMale)
-                            putExtra("fruitHEIFAscoreFemale", matchedUser.fruitHEIFAscoreFemale)
-                            putExtra("grainsAndCerealsHEIFAscoreMale", matchedUser.grainsAndCerealsHEIFAscoreMale)
-                            putExtra("grainsAndCerealsHEIFAscoreFemale", matchedUser.grainsAndCerealsHEIFAscoreFemale)
-                            putExtra("wholegrainsHEIFAscoreMale", matchedUser.wholegrainsHEIFAscoreMale)
-                            putExtra("wholegrainsHEIFAscoreFemale", matchedUser.wholegrainsHEIFAscoreFemale)
-                            putExtra("meatAndAlternativesHEIFAscoreMale", matchedUser.meatAndAlternativesHEIFAscoreMale)
-                            putExtra("meatAndAlternativesHEIFAscoreFemale", matchedUser.meatAndAlternativesHEIFAscoreFemale)
-                            putExtra("dairyAndAlternativesHEIFAscoreMale", matchedUser.dairyAndAlternativesHEIFAscoreMale)
-                            putExtra("dairyAndAlternativesHEIFAscoreFemale", matchedUser.dairyAndAlternativesHEIFAscoreFemale)
-                            putExtra("sodiumHEIFAscoreMale", matchedUser.sodiumHEIFAscoreMale)
-                            putExtra("sodiumHEIFAscoreFemale", matchedUser.sodiumHEIFAscoreFemale)
-                            putExtra("alcoholHEIFAscoreMale", matchedUser.alcoholHEIFAscoreMale)
-                            putExtra("alcoholHEIFAscoreFemale", matchedUser.alcoholHEIFAscoreFemale)
-                            putExtra("waterHEIFAscoreMale", matchedUser.waterHEIFAscoreMale)
-                            putExtra("waterHEIFAscoreFemale", matchedUser.waterHEIFAscoreFemale)
-                            putExtra("sugarHEIFAscoreMale", matchedUser.sugarHEIFAscoreMale)
-                            putExtra("sugarHEIFAscoreFemale", matchedUser.sugarHEIFAscoreFemale)
-                            putExtra("unsaturatedFatHEIFAscoreMale", matchedUser.unsaturatedFatHEIFAscoreMale)
-                            putExtra("unsaturatedFatHEIFAscoreFemale", matchedUser.unsaturatedFatHEIFAscoreFemale)
                         }
                         context.startActivity(intent)
                     } else {
@@ -217,7 +189,7 @@ fun loadCSV(context: Context): List<UserData> {
                         UserData(
                             phoneNumber = tokens[0].trim().removePrefix("\""),
                             userId = tokens[1].trim(),
-                            sex = tokens[2].trim(),
+
                             HEIFAtotalscoreMale = tokens[3].toDoubleOrNull() ?: 0.0,
                             HEIFAtotalscoreFemale = tokens[4].toDoubleOrNull() ?: 0.0,
                             discretionaryHEIFAscoreMale = tokens[5].toDoubleOrNull() ?: 0.0,
@@ -255,11 +227,9 @@ fun loadCSV(context: Context): List<UserData> {
     return userList
 }
 
-
 data class UserData(
     val phoneNumber: String,
     val userId: String,
-    val sex: String,
 
     val HEIFAtotalscoreMale: Double,
     val HEIFAtotalscoreFemale: Double,
