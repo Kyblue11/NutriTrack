@@ -99,7 +99,10 @@ fun FoodIntakeQuestionnaireScreen() {
                     Text("Food Intake Questionnaire", fontSize = 20.sp)
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onBackPressedDispatcher?.onBackPressed() }) {
+                    IconButton(onClick = {
+                        val intent = Intent(context, LoginActivity::class.java)
+                        context.startActivity(intent)
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
@@ -233,6 +236,7 @@ fun FoodIntakeQuestionnaireScreen() {
         val personaImage = getPersonaImage(currentPersona)
         val personaDesc = getPersonaDescription(currentPersona)
 
+        // persona modal boxes
         AlertDialog(
             onDismissRequest = { showPersonaDialog = false },
             text = {
@@ -430,6 +434,7 @@ fun TimingRow(
     }
 }
 
+// referenced from https://androindian.com/time-picker-dialog-in-jetpac/
 @Composable
 private fun showTimePickerDialog(onTimeSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
