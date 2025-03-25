@@ -1,5 +1,6 @@
 package com.aaronlamkongyew33521808.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -66,7 +67,14 @@ class InsightsActivity : ComponentActivity() {
                     mainTotalScore = mainTotalScore,
                     subScores = subScores,
 
-                    onShareClick = {  },
+                    onShareClick = {
+                        val textToShare = "My Food Quality Score is ${"%.2f".format(mainTotalScore)}/100. " + "Check out my other scores!"
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, textToShare)
+                        }
+                        startActivity(Intent.createChooser(shareIntent, "Share text via"))
+                    },
                     onImproveClick = {  },
 
                     onNavigateHome = { finish() },
@@ -214,7 +222,7 @@ fun InsightsContent(
             ScoreRowWithSlider(
                 category = label,
                 score = value,
-                maxScore = 10.0
+
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -277,8 +285,9 @@ fun InsightsContent(
 fun ScoreRowWithSlider(
     category: String,
     score: Double,
-    maxScore: Double
 ) {
+    val fivePointCategories = listOf("Grains & Cereals", "Whole Grains", "Water", "Alcohol")
+    val maxScore = if (category in fivePointCategories) 5.0 else 10.0
     val fraction = (score / maxScore).coerceIn(0.0, 1.0).toFloat()
 
     Row(

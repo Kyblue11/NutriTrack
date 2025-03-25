@@ -55,7 +55,7 @@ class DashboardActivity : ComponentActivity() {
 @Composable
 fun FoodIntakeQuestionnaireScreen() {
     val context = LocalContext.current
-    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher // TODO: remove?
     val sharedPreferences = context.getSharedPreferences("NutriTrackPrefs", Context.MODE_PRIVATE)
 
     // get all the data from the previous activity
