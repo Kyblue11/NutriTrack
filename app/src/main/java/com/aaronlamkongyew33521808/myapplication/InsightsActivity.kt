@@ -99,6 +99,7 @@ private fun getSubScores(record: UserData?, sex: String): Map<String, Double> {
         "Meat & Alternatives" to if (male) record.meatAndAlternativesHEIFAscoreMale else record.meatAndAlternativesHEIFAscoreFemale,
         "Dairy" to if (male) record.dairyAndAlternativesHEIFAscoreMale else record.dairyAndAlternativesHEIFAscoreFemale,
         "Water" to if (male) record.waterHEIFAscoreMale else record.waterHEIFAscoreFemale,
+        "Saturated Fats" to if (male) record.SaturatedFatHEIFAscoreMale else record.SaturatedFatHEIFAscoreFemale,
         "Unsaturated Fats" to if (male) record.unsaturatedFatHEIFAscoreMale else record.unsaturatedFatHEIFAscoreFemale,
         "Sodium" to if (male) record.sodiumHEIFAscoreMale else record.sodiumHEIFAscoreFemale,
         "Sugar" to if (male) record.sugarHEIFAscoreMale else record.sugarHEIFAscoreFemale,

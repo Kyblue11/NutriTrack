@@ -204,9 +204,8 @@ fun ScoreSection(score: Double, onSeeAllScoresClick: () -> Unit) {
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        // Example image resource
         Image(
-            painter = painterResource(id = R.drawable.persona_1),
+            painter = painterResource(id = R.drawable.avatar),
             contentDescription = "Plate image??",
             modifier = Modifier
                 .size(150.dp)

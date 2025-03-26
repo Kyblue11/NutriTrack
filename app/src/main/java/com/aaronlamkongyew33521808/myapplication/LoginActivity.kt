@@ -214,6 +214,8 @@ fun loadCSV(context: Context): List<UserData> {
                             waterHEIFAscoreFemale = tokens[50].toDoubleOrNull() ?: 0.0,
                             sugarHEIFAscoreMale = tokens[54].toDoubleOrNull() ?: 0.0,
                             sugarHEIFAscoreFemale = tokens[55].toDoubleOrNull() ?: 0.0,
+                            SaturatedFatHEIFAscoreMale = tokens[57].toDoubleOrNull() ?: 0.0,
+                            SaturatedFatHEIFAscoreFemale = tokens[58].toDoubleOrNull() ?: 0.0,
                             unsaturatedFatHEIFAscoreMale = tokens[60].toDoubleOrNull() ?: 0.0,
                             unsaturatedFatHEIFAscoreFemale = tokens[61].toDoubleOrNull() ?: 0.0
                         )
@@ -255,6 +257,8 @@ data class UserData(
     val waterHEIFAscoreFemale: Double,
     val sugarHEIFAscoreMale: Double,
     val sugarHEIFAscoreFemale: Double,
+    val SaturatedFatHEIFAscoreMale: Double,
+    val SaturatedFatHEIFAscoreFemale: Double,
     val unsaturatedFatHEIFAscoreMale: Double,
     val unsaturatedFatHEIFAscoreFemale: Double,
 )
