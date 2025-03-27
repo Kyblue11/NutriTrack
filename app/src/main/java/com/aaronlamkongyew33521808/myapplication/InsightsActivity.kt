@@ -287,7 +287,7 @@ fun ScoreRowWithSlider(
     category: String,
     score: Double,
 ) {
-    val fivePointCategories = listOf("Grains & Cereals", "Whole Grains", "Water", "Alcohol")
+    val fivePointCategories = listOf("Grains & Cereals", "Whole Grains", "Water", "Alcohol", "Saturated Fats", "Unsaturated Fats")
     val maxScore = if (category in fivePointCategories) 5.0 else 10.0
     val fraction = (score / maxScore).coerceIn(0.0, 1.0).toFloat()
 

@@ -257,6 +257,7 @@ fun BottomNavBar(
     onNutriCoachClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
+    // BottomAppBar might be better for within-screen navigation
     NavigationBar {
         NavigationBarItem(
             selected = true,

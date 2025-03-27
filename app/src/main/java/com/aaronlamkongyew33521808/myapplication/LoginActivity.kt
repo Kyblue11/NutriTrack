@@ -40,7 +40,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 class LoginActivity : ComponentActivity() {
-    // store  parsed CSV data
+    // store parsed CSV data
     private lateinit var userData: List<UserData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
