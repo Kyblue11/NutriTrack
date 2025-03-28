@@ -84,9 +84,9 @@ fun FoodIntakeQuestionnaireScreen() {
     )
 
     var selectedPersona by remember { mutableStateOf(sharedPreferences.getString("${userId}_selectedPersona", "") ?: "") }
-    var biggestMealTime by remember { mutableStateOf(sharedPreferences.getString("${userId}_biggestMealTime", "00:00") ?: "00:00") }
-    var sleepTime by remember { mutableStateOf(sharedPreferences.getString("${userId}_sleepTime", "00:00") ?: "00:00") }
-    var wakeTime by remember { mutableStateOf(sharedPreferences.getString("${userId}_wakeTime", "00:00") ?: "00:00") }
+    var biggestMealTime by remember { mutableStateOf(sharedPreferences.getString("${userId}_biggestMealTime", "") ?: "") }
+    var sleepTime by remember { mutableStateOf(sharedPreferences.getString("${userId}_sleepTime", "") ?: "") }
+    var wakeTime by remember { mutableStateOf(sharedPreferences.getString("${userId}_wakeTime", "") ?: "") }
 
     // persona dialog
     var showPersonaDialog by remember { mutableStateOf(false) }
