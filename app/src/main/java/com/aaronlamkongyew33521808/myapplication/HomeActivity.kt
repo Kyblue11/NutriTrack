@@ -97,7 +97,7 @@ fun HomeScreen(
                     )
                 ) },
                 navigationIcon = {
-                    IconButton(onClick = { /* handle nav drawer or back? */ }) {
+                    IconButton(onClick = { /* handle nav drawer or back? Will use for A3 */ }) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Menu"
@@ -206,7 +206,7 @@ fun ScoreSection(score: Double, onSeeAllScoresClick: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
             painter = painterResource(id = R.drawable.avatar),
-            contentDescription = "Plate image??",
+            contentDescription = "Purple Mascot",
             modifier = Modifier
                 .size(150.dp)
                 .padding(end = 16.dp)
@@ -257,7 +257,6 @@ fun BottomNavBar(
     onNutriCoachClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    // BottomAppBar might be better for within-screen navigation
     NavigationBar {
         NavigationBarItem(
             selected = true,

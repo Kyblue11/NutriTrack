@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -55,7 +54,6 @@ class DashboardActivity : ComponentActivity() {
 @Composable
 fun FoodIntakeQuestionnaireScreen() {
     val context = LocalContext.current
-    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher // TODO: remove?
     val sharedPreferences = context.getSharedPreferences("NutriTrackPrefs", Context.MODE_PRIVATE)
 
     // get all the data from the previous activity
@@ -375,6 +373,7 @@ fun PersonaDropdown(
     selectedPersona: String,
     onPersonaSelected: (String) -> Unit
 ) {
+    // to remember the state of the dropdown menu
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(

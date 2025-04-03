@@ -69,15 +69,16 @@ class InsightsActivity : ComponentActivity() {
 
                     onShareClick = {
                         val textToShare = "My Food Quality Score is ${"%.2f".format(mainTotalScore)}/100. " + "Check out my other scores!"
+                        // for creating a share intent
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, textToShare)
+                            putExtra(Intent.EXTRA_TEXT, textToShare) // for text
                         }
                         startActivity(Intent.createChooser(shareIntent, "Share text via"))
                     },
                     onImproveClick = {  },
 
-                    onNavigateHome = { finish() },
+                    onNavigateHome = { finish() }, // back to HomeActivity
                     onNavigateInsights = {  },
                     onNavigateNutriCoach = {   },
                     onNavigateSettings = {   }
@@ -87,6 +88,7 @@ class InsightsActivity : ComponentActivity() {
     }
 }
 
+// 13 sub-scores
 private fun getSubScores(record: UserData?, sex: String): Map<String, Double> {
     if (record == null) return emptyMap()
     val male = sex.equals("male", ignoreCase = true)
@@ -287,6 +289,7 @@ fun ScoreRowWithSlider(
     category: String,
     score: Double,
 ) {
+    // some categories have a max score of 5, others have a max score of 10
     val fivePointCategories = listOf("Grains & Cereals", "Whole Grains", "Water", "Alcohol", "Saturated Fats", "Unsaturated Fats")
     val maxScore = if (category in fivePointCategories) 5.0 else 10.0
     val fraction = (score / maxScore).coerceIn(0.0, 1.0).toFloat()
