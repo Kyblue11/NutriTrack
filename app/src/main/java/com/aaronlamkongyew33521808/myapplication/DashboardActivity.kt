@@ -420,8 +420,21 @@ fun TimingRow(
     ) {
         Text(text = label, fontSize = 14.sp)
         Spacer(modifier = Modifier.height(4.dp))
-        OutlinedButton(onClick = { showDialog = true }) {
-            Text(text = timeValue, fontSize = 14.sp)
+        OutlinedButton(
+            onClick = { showDialog = true },
+            modifier = Modifier.heightIn(min = 48.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            // so that the oval button will not be em
+            val displayText = if (timeValue.isEmpty()) "Select time" else timeValue
+
+            Text(
+                text = displayText,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
 
         if (showDialog) {
