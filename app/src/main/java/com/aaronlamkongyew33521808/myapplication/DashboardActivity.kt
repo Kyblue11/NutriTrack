@@ -433,7 +433,6 @@ fun TimingRow(
     }
 }
 
-// referenced from https://androindian.com/time-picker-dialog-in-jetpac/
 @Composable
 private fun showTimePickerDialog(onTimeSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
