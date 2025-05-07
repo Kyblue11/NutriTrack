@@ -15,12 +15,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -34,6 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.aaronlamkongyew33521808.myapplication.ui.theme.NutriTrackTheme
 import java.io.BufferedReader
@@ -61,6 +68,7 @@ fun LoginScreen(userData: List<UserData>) {
     var selectedUserId by remember { mutableStateOf(userData.firstOrNull()?.userId ?: "") }
     var phoneNumber by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+    var phoneVisible by remember { mutableStateOf(false) }
 
     // Needed for Toast
     val context = LocalContext.current
@@ -124,7 +132,18 @@ fun LoginScreen(userData: List<UserData>) {
                 onValueChange = { phoneNumber = it },
                 label = { Text("Phone number") },
                 placeholder = { Text("Enter your number") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+
+                visualTransformation = if (phoneVisible) VisualTransformation.None
+                else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { phoneVisible = !phoneVisible }) {
+                        Icon(
+                            imageVector = if (phoneVisible) Icons.Filled.Check else Icons.Filled.Close,
+                            contentDescription = if (phoneVisible) "Hide phone" else "Show phone"
+                        )
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
