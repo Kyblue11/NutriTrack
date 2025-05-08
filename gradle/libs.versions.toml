@@ -13,6 +13,7 @@ roomCommonJvm = "2.7.1"
 roomRuntimeAndroid = "2.7.1"
 navigationCommonAndroid = "2.9.0-rc01"
 navigationCompose = "2.8.9"
+ksp = "2.0.21-1.0.25"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,4 +40,4 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

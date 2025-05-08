@@ -16,13 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aaronlamkongyew33521808.myapplication.R
-import com.aaronlamkongyew33521808.myapplication.data.entity.QuestionnaireEntity
 import com.aaronlamkongyew33521808.myapplication.ui.navigation.Routes
 import androidx.navigation.NavController
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import com.aaronlamkongyew33521808.myapplication.viewmodel.QuestionnaireViewModel
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,22 +36,22 @@ fun DashboardScreen(
     LaunchedEffect(userId) { vm.load(userId) }
 
     // observe state
-    val fruits      by vm.fruits.collectAsState()
-    val vegetables  by vm.vegetables.collectAsState()
-    val grains      by vm.grains.collectAsState()
-    val redMeat     by vm.redMeat.collectAsState()
-    val seafood     by vm.seafood.collectAsState()
-    val poultry     by vm.poultry.collectAsState()
-    val fish        by vm.fish.collectAsState()
-    val eggs        by vm.eggs.collectAsState()
-    val nutsSeeds   by vm.nutsSeeds.collectAsState()
+    val fruits      by vm.fruits.collectAsState(initial = false)
+    val vegetables  by vm.vegetables.collectAsState(initial = false)
+    val grains      by vm.grains.collectAsState(initial = false)
+    val redMeat     by vm.redMeat.collectAsState(initial = false)
+    val seafood     by vm.seafood.collectAsState(initial = false)
+    val poultry     by vm.poultry.collectAsState(initial = false)
+    val fish        by vm.fish.collectAsState(initial = false)
+    val eggs        by vm.eggs.collectAsState(initial = false)
+    val nutsSeeds   by vm.nutsSeeds.collectAsState(initial = false)
 
     var showPersonaDialog by remember { mutableStateOf(false) }
-    val persona         by vm.persona.collectAsState()
+    val persona         by vm.persona.collectAsState(initial = "")
 
-    val biggestMealTime by vm.biggestMealTime.collectAsState()
-    val sleepTime       by vm.sleepTime.collectAsState()
-    val wakeTime        by vm.wakeTime.collectAsState()
+    val biggestMealTime by vm.biggestMealTime.collectAsState(initial = "")
+    val sleepTime       by vm.sleepTime.collectAsState(initial = "")
+    val wakeTime        by vm.wakeTime.collectAsState(initial = "")
 
     Scaffold(
         topBar = {
@@ -81,8 +81,22 @@ fun DashboardScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             FoodCategoriesRow1(fruits, vm::setFruits, vegetables, vm::setVegetables, grains, vm::setGrains)
-            FoodCategoriesRow2(redMeat = vm::setRedMeat, seafood = vm::setSeafood, poultry = vm::setPoultry)
-            FoodCategoriesRow3(fish = vm::setFish, eggs = vm::setEggs, nutsSeeds = vm::setNutsSeeds)
+            FoodCategoriesRow2(
+                redMeat      = redMeat,
+                onRedMeatChange = vm::setRedMeat,
+                seafood      = seafood,
+                onSeafoodChange = vm::setSeafood,
+                poultry      = poultry,
+                onPoultryChange = vm::setPoultry
+            )
+            FoodCategoriesRow3(
+                fish = fish,
+                onFishChange = vm::setFish,
+                eggs = eggs,
+                onEggsChange = vm::setEggs,
+                nutsSeeds = nutsSeeds,
+                onNutsSeedsChange = vm::setNutsSeeds
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
             Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp)

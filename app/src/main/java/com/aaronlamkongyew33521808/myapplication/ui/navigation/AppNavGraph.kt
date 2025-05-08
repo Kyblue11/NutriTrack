@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aaronlamkongyew33521808.myapplication.ui.dashboard.DashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
-import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
+//import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.login.LoginScreen
 import com.aaronlamkongyew33521808.myapplication.ui.register.RegisterScreen
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
@@ -43,25 +43,32 @@ fun AppNavGraph() {
             )
         }
         composable(
-            "dashboard/{userId}",
+            route = Routes.Dashboard,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStack ->
-            val userId = backStack.arguments?.getString("userId") ?: ""
-            DashboardScreen(userId = userId, onContinue = { navController.navigate("home/$userId") })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            DashboardScreen(
+                userId = userId,
+                navController = navController
+            )
         }
         composable(
-            "home/{userId}",
+            route = Routes.Home,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStack ->
-            val userId = backStack.arguments?.getString("userId") ?: ""
-            HomeScreen(userId = userId, onInsights = { navController.navigate("insights/$userId") })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            HomeScreen(
+                userId = userId,
+                onEditClick = { navController.navigate("dashboard/$userId") },
+                onInsights = { navController.navigate("insights/$userId") }
+            )
         }
-        composable(
-            "insights/{userId}",
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStack ->
-            val userId = backStack.arguments?.getString("userId") ?: ""
-            InsightsScreen(userId = userId)
-        }
+//        composable(
+//            "insights/{userId}",
+//            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+//        ) { backStack ->
+//            val userId = backStack.arguments?.getString("userId") ?: ""
+//            InsightsScreen(userId = userId)
+//        }
     }
 }

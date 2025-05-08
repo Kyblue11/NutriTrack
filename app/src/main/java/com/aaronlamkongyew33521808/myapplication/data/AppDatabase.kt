@@ -4,12 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.aaronlamkongyew33521808.myapplication.data.dao.QuestionnaireDao
 import com.aaronlamkongyew33521808.myapplication.data.dao.UserDao
+import com.aaronlamkongyew33521808.myapplication.data.entity.QuestionnaireEntity
 import com.aaronlamkongyew33521808.myapplication.data.entity.UserEntity
 
-@Database(entities = [UserEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [UserEntity::class, QuestionnaireEntity::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
+    abstract fun questionnaireDao(): QuestionnaireDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
@@ -19,7 +26,10 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "nutritrack_db"
-                ).build().also { INSTANCE = it }
+                )
+                    .fallbackToDestructiveMigration()   //  allow schema reset on version change
+                    .build()
+                    .also { INSTANCE = it }
             }
     }
 }

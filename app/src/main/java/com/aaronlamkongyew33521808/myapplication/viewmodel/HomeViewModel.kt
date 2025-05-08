@@ -1,0 +1,30 @@
+package com.aaronlamkongyew33521808.myapplication.viewmodel
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
+import com.aaronlamkongyew33521808.myapplication.repository.HomeRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
+    private val repo = HomeRepository(AppDatabase.getDatabase(application).userDao())
+
+    private val _userName = MutableStateFlow("Guest")
+    val userName = _userName.asStateFlow()
+
+    private val _foodQualityScore = MutableStateFlow(0.0)
+    val foodQualityScore = _foodQualityScore.asStateFlow()
+
+    fun load(userId: String) = viewModelScope.launch {
+        val user = repo.getUserById(userId)
+        _userName.value = user?.userId ?: "Guest"
+        _foodQualityScore.value = if (user?.sex == "Male") {
+            user.HEIFAtotalscoreMale
+        } else {
+            user?.HEIFAtotalscoreFemale ?: 0.0
+        }
+    }
+}
