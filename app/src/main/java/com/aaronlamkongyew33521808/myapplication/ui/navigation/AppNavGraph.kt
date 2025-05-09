@@ -12,12 +12,14 @@ import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
 import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.login.LoginScreen
 import com.aaronlamkongyew33521808.myapplication.ui.register.RegisterScreen
+import com.aaronlamkongyew33521808.myapplication.ui.welcome.WelcomeScreen
 import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.QuestionnaireViewModel
 
 object Routes {
+    const val Welcome = "welcome"
     const val Login = "login"
     const val Register = "register"
     const val Dashboard = "dashboard/{userId}" // pass userId
@@ -28,12 +30,25 @@ object Routes {
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.Login) {
+    NavHost(navController = navController, startDestination = Routes.Welcome) {
+
+        composable(Routes.Welcome) {
+            WelcomeScreen {
+                navController.navigate(Routes.Login) {
+//                    popUpTo(Routes.Welcome) { inclusive = true }
+                }
+            }
+        }
+
         composable(Routes.Login) {
             val vm: LoginViewModel = viewModel()
             LoginScreen(
                 viewModel = vm,
-                onLoginSuccess = { id -> navController.navigate("dashboard/$id") },
+                onLoginSuccess = { id -> navController.navigate("dashboard/$id")
+//                    {
+//                        popUpTo(Routes.Login) { inclusive = true } // TODO: should i remove this?
+//                    }
+                 },
                 onRegister = { navController.navigate(Routes.Register) }
             )
         }
