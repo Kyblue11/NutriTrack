@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aaronlamkongyew33521808.myapplication.R
@@ -28,33 +29,51 @@ fun WelcomeScreen(onLetsGo: () -> Unit) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(100.dp))
+
             Text(
-                "NutriTrack",
-                style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                text = "NutriTrack",
+                style = TextStyle(
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                ),
             )
-            Spacer(Modifier.height(32.dp))
+
             Image(
-                painter = painterResource(R.drawable.egg_logo),
+                painter = painterResource(id = R.drawable.egg_logo),
                 contentDescription = "NutriTrack Logo",
-                modifier = Modifier.size(250.dp)
+                modifier = Modifier.size(300.dp)
             )
-            Spacer(Modifier.height(32.dp))
+
+            Spacer(modifier = Modifier.height(32.dp))
+
             Text(
-                """
-        This app provides general health and nutrition information for educational purposes only. 
-        It is not intended as medical advice. Always consult a healthcare professional before changes.
-        """.trimIndent(),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                text =
+                    """
+                                This app provides general health and nutrition information for educational purposes only. It is not intended as medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional before making any changes to your diet, exercise, or health regimen. Use this app at your own risk.
+
+                                If you’d like to an Accredited Practicing Dietitian (APD), please visit the Monash Nutrition/Dietetics Clinic (discounted rates for students):
+                                https://www.monash.edu/medicine/scs/nutrition/clinics/nutrition
+                                """.trimIndent(),
+                textAlign = TextAlign.Justify,
+                style = TextStyle(fontSize = 16.sp),
             )
-            Spacer(Modifier.height(24.dp))
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
                 onClick = onLetsGo,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Let's Go!")
             }
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "Designed with ❤️ by Aaron Lam Kong Yew (33521808)",
+                style = TextStyle(fontSize = 12.sp),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

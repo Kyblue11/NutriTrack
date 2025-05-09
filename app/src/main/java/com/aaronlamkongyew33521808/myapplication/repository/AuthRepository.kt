@@ -10,4 +10,7 @@ class AuthRepository(private val userDao: UserDao) {
     suspend fun register(entity: UserEntity) {
         userDao.insertUsers(listOf(entity))
     }
+
+    suspend fun getAllUsers(): List<UserEntity> = userDao.getAllUsers()
+
 }
