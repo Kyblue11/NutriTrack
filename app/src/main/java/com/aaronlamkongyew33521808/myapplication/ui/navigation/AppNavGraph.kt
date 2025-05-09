@@ -9,11 +9,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aaronlamkongyew33521808.myapplication.ui.dashboard.DashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
-//import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
+import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.login.LoginScreen
 import com.aaronlamkongyew33521808.myapplication.ui.register.RegisterScreen
+import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
+import com.aaronlamkongyew33521808.myapplication.viewmodel.QuestionnaireViewModel
 
 object Routes {
     const val Login = "login"
@@ -63,12 +65,16 @@ fun AppNavGraph() {
                 onInsights = { navController.navigate("insights/$userId") }
             )
         }
-//        composable(
-//            "insights/{userId}",
-//            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-//        ) { backStack ->
-//            val userId = backStack.arguments?.getString("userId") ?: ""
-//            InsightsScreen(userId = userId)
-//        }
+        composable(
+            route = Routes.Insights,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            val vm: InsightsViewModel = viewModel()
+            InsightsScreen(
+                userId = userId,
+                vm = vm
+            )
+        }
     }
 }
