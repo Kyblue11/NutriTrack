@@ -19,6 +19,7 @@ class NutriTrackApp : Application() {
                 dao.insertUsers(list.map { UserEntity.fromUserData(it) })
             }
             val qDao = db.questionnaireDao()
+            // TODO: use qDao?
         }
     }
 }
