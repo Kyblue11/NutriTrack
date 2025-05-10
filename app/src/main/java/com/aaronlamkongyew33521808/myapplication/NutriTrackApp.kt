@@ -16,7 +16,7 @@ class NutriTrackApp : Application() {
             val dao = db.userDao()
             if (dao.countUsers() == 0) {
                 val list = loadCSV(this@NutriTrackApp)
-                dao.insertUsers(list.map { UserEntity.fromUserData(it) })
+                dao.insertUsers(list.map { UserEntity.fromUserData(it) }) // TODO: check if csv is loaded every time the app is launched
             }
             val qDao = db.questionnaireDao()
             // TODO: use qDao?

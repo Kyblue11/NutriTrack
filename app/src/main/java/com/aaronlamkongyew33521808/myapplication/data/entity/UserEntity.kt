@@ -43,7 +43,7 @@ data class UserEntity(
     val discretionaryHEIFAscoreMale: Double,
     val discretionaryHEIFAscoreFemale: Double,
 
-    // new fields for authentication
+    // TODO: check this
     @ColumnInfo val name: String?,
     @ColumnInfo val passwordHash: String?
 ) {
