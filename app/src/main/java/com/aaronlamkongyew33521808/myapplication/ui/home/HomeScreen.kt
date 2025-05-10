@@ -30,6 +30,7 @@ fun HomeScreen(
     LaunchedEffect(userId) { viewModel.load(userId) }
 
     // observe
+    val userId by viewModel.userId.collectAsState()
     val userName by viewModel.userName.collectAsState()
     val score by viewModel.foodQualityScore.collectAsState()
 
@@ -71,7 +72,12 @@ fun HomeScreen(
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(text = userName, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text(text =
+                "User $userId,  $userName" ,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(24.dp))
             Text(
                 text = "You’ve already filled in your questionnaire, but you can change details below:",
                 fontSize = 14.sp,

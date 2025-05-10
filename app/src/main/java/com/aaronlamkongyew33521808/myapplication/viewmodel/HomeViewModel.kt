@@ -12,6 +12,9 @@ import kotlinx.coroutines.launch
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val repo = HomeRepository(AppDatabase.getDatabase(application).userDao())
 
+    private val _userId = MutableStateFlow("Guest")
+    val userId = _userId.asStateFlow()
+
     private val _userName = MutableStateFlow("Guest")
     val userName = _userName.asStateFlow()
 
@@ -20,7 +23,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     fun load(userId: String) = viewModelScope.launch {
         val user = repo.getUserById(userId)
-        _userName.value = user?.userId ?: "Guest"
+        _userId.value = user?.userId ?: "Guest"
+        _userName.value = user?.name ?: "Guest"
         _foodQualityScore.value = if (user?.sex == "Male") {
             user.HEIFAtotalscoreMale
         } else {
