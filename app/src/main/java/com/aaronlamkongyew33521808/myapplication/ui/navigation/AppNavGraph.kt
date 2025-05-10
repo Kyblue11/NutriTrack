@@ -89,7 +89,8 @@ fun AppNavGraph() {
             val vm: InsightsViewModel = viewModel()
             InsightsScreen(
                 userId = userId,
-                vm = vm
+                vm = vm,
+                navController = navController
             )
         }
     }

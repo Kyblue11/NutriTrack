@@ -61,6 +61,18 @@ fun DashboardScreen(
     val sleepTime       by vm.sleepTime.collectAsState(initial = "")
     val wakeTime        by vm.wakeTime.collectAsState(initial = "")
 
+    // validation rules
+    val anyFoodSelected = listOf(
+        fruits, vegetables, grains,
+        redMeat, seafood, poultry,
+        fish, eggs, nutsSeeds
+    ).any { it }
+    val personaSelected = persona.isNotBlank()
+    val times = listOf(biggestMealTime, sleepTime, wakeTime)
+    val noConflict = times.all { it.isNotBlank() } && times.distinct().size == times.size
+    val canSave = anyFoodSelected && personaSelected && noConflict
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -166,9 +178,14 @@ fun DashboardScreen(
                         }
                     }
                 },
+                enabled = canSave,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Save", fontSize = 16.sp)
+                if (canSave) {
+                    Text(text = "Save", fontSize = 16.sp)
+                } else {
+                    Text(text = "Please select valid options", fontSize = 16.sp, color = MaterialTheme.colorScheme.error)
+                }
             }
         }
     }

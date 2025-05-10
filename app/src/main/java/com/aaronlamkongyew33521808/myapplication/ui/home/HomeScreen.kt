@@ -2,6 +2,8 @@ package com.aaronlamkongyew33521808.myapplication.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -40,7 +42,16 @@ fun HomeScreen(
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
-                }
+                },
+
+                navigationIcon = {
+                    IconButton(onClick = { /* TODO */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "HamburgerMenu"
+                        )
+                    }
+                },
             )
         },
         bottomBar = {
@@ -56,16 +67,20 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top
         ) {
             // Greeting Section
-            Text(text = "Hello,", fontSize = 18.sp)
+            Text(text = "Hello,",
+                fontSize = 18.sp,
+                style = MaterialTheme.typography.titleMedium
+            )
             Text(text = userName, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Text(
-                text = "You’ve already filled in your questionnaire, but you can change details here:",
-                fontSize = 14.sp
+                text = "You’ve already filled in your questionnaire, but you can change details below:",
+                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
             OutlinedButton(onClick = onEditClick) {
                 Icon(
-                    painter = painterResource(id = R.drawable.settings), // TODO: R.drawable.edit
+                    painter = painterResource(id = R.drawable.edit),
                     contentDescription = null
                 )
                 Spacer(Modifier.width(4.dp))
@@ -88,12 +103,17 @@ fun HomeScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.avatar),
-                    contentDescription = null,
-                    modifier = Modifier.size(100.dp)
+                    contentDescription = "Purple Mascot",
+                    modifier = Modifier
+                        .size(150.dp)
+                        .padding(end = 16.dp)
                 )
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text("Your Food Quality score", fontSize = 14.sp)
+                    Text(
+                        text = "Your Food Quality score",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     val color = when {
                         score >= 66.7 -> Color(0xFF4CAF50)
                         score >= 33.3 -> Color(0xFFFFC107)
@@ -110,15 +130,18 @@ fun HomeScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Explanation
             Text(
                 text = "What is the Food Quality Score?",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
-                text = "Your Food Quality Score provides a snapshot of how well your eating patterns align with established guidelines...",
-                fontSize = 14.sp,
+                text = """
+            Your Food Quality Score provides a snapshot of how well your eating patterns align with established food guidelines, helping you identify both strengths and opportunities for improvement in your diet.
+            
+            This personalized measurement considers various food groups including vegetables, fruits, whole grains, and proteins to give you practical insights for making healthier food choices.
+        """.trimIndent(),
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Justify
             )
         }
