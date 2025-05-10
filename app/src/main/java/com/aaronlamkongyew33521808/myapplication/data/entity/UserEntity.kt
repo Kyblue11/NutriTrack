@@ -41,7 +41,11 @@ data class UserEntity(
     val alcoholHEIFAscoreMale: Double,
     val alcoholHEIFAscoreFemale: Double,
     val discretionaryHEIFAscoreMale: Double,
-    val discretionaryHEIFAscoreFemale: Double
+    val discretionaryHEIFAscoreFemale: Double,
+
+    // new fields for authentication
+    @ColumnInfo val name: String?,
+    @ColumnInfo val passwordHash: String?
 ) {
     companion object {
         /** Map from your CSV-backed UserData into the Room entity. */
@@ -76,7 +80,10 @@ data class UserEntity(
             alcoholHEIFAscoreMale = u.alcoholHEIFAscoreMale,
             alcoholHEIFAscoreFemale = u.alcoholHEIFAscoreFemale,
             discretionaryHEIFAscoreMale = u.discretionaryHEIFAscoreMale,
-            discretionaryHEIFAscoreFemale = u.discretionaryHEIFAscoreFemale
+            discretionaryHEIFAscoreFemale = u.discretionaryHEIFAscoreFemale,
+
+            name = null,
+            passwordHash = null
         )
     }
 }

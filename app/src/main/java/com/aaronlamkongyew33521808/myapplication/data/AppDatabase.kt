@@ -11,7 +11,7 @@ import com.aaronlamkongyew33521808.myapplication.data.entity.UserEntity
 
 @Database(
     entities = [UserEntity::class, QuestionnaireEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

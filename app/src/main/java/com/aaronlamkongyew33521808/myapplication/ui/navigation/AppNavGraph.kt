@@ -16,7 +16,6 @@ import com.aaronlamkongyew33521808.myapplication.ui.welcome.WelcomeScreen
 import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
-import com.aaronlamkongyew33521808.myapplication.viewmodel.QuestionnaireViewModel // TODO: why not used?
 
 object Routes {
     const val Welcome = "welcome"
@@ -56,7 +55,9 @@ fun AppNavGraph() {
             val vm: RegisterViewModel = viewModel()
             RegisterScreen(
                 viewModel = vm,
-                onRegisterSuccess = { id -> navController.popBackStack(); navController.navigate("login?userId=$id") }
+                onDone = { navController.navigate(Routes.Login) {
+                    popUpTo(Routes.Register) { inclusive = true }
+                } }
             )
         }
         composable(
