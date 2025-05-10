@@ -1,6 +1,7 @@
 package com.aaronlamkongyew33521808.myapplication.ui.dashboard
 
 import android.app.TimePickerDialog
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -33,7 +34,13 @@ fun DashboardScreen(
     vm: QuestionnaireViewModel = viewModel()
 ) {
     // load once
-    LaunchedEffect(userId) { vm.load(userId) }
+    LaunchedEffect(Unit) { vm.load(userId) }
+    // intercept Android back (gesture or system button)
+    BackHandler {
+        navController.navigate(Routes.Login) {
+            popUpTo(Routes.Login) { inclusive = false }
+        }
+    }
 
     // observe state
     val fruits      by vm.fruits.collectAsState(initial = false)
@@ -47,6 +54,7 @@ fun DashboardScreen(
     val nutsSeeds   by vm.nutsSeeds.collectAsState(initial = false)
 
     var showPersonaDialog by remember { mutableStateOf(false) }
+    var currentPersona by remember { mutableStateOf("Health Devotee") }
     val persona         by vm.persona.collectAsState(initial = "")
 
     val biggestMealTime by vm.biggestMealTime.collectAsState(initial = "")
@@ -58,8 +66,12 @@ fun DashboardScreen(
             TopAppBar(
                 title = { Text("Food Intake Questionnaire", fontSize = 20.sp) },
                 navigationIcon = {
-                    IconButton(onClick =  { navController.popBackStack() } )
-                    {
+                    IconButton(onClick = {
+                        // also intercept the arrow
+                        navController.navigate(Routes.Login) {
+                            popUpTo(Routes.Login) { inclusive = false }
+                        }
+                    }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back")
                     }
@@ -114,7 +126,13 @@ fun DashboardScreen(
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            FlowRowPersonaButtons(personaList = personaList,    onPersonaClick =  { vm.setPersona(it) } )
+            FlowRowPersonaButtons(
+                personaList = personaList,
+                onPersonaClick = { persona ->
+                    currentPersona = persona
+                    showPersonaDialog = true
+                }
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
             Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp)
@@ -132,9 +150,12 @@ fun DashboardScreen(
                 style = TextStyle(fontSize = 16.sp),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            TimingRow("Biggest meal time", biggestMealTime, vm::setBiggestMealTime)
-            TimingRow("Sleep time", sleepTime, vm::setSleepTime)
-            TimingRow("Wake time", wakeTime, vm::setWakeTime)
+            TimingRow( label = "What time of day approx. do you normally eat your biggest meal?"
+                , biggestMealTime, vm::setBiggestMealTime)
+            TimingRow( label = "What time of day approx. do you go to sleep at night?"
+                , sleepTime, vm::setSleepTime)
+            TimingRow( label = "What time of day approx. do you wake up in the morning?",
+                wakeTime, vm::setWakeTime)
 
             Spacer(Modifier.height(24.dp))
             Button(
@@ -153,8 +174,8 @@ fun DashboardScreen(
     }
 
     if (showPersonaDialog) {
-        val personaImage = getPersonaImage(persona)
-        val personaDesc = getPersonaDescription(persona)
+        val personaImage = getPersonaImage(currentPersona)
+        val personaDesc = getPersonaDescription(currentPersona)
 
         // persona modal boxes
         AlertDialog(
@@ -163,12 +184,12 @@ fun DashboardScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
                         painter = painterResource(personaImage),
-                        contentDescription = persona,
+                        contentDescription = currentPersona,
                         modifier = Modifier.size(100.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = persona,
+                        text = currentPersona,
                         style = TextStyle(fontSize = 18.sp),
                         textAlign = TextAlign.Center
                     )
@@ -276,7 +297,6 @@ fun FoodCategoriesRow3(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FlowRowPersonaButtons(
     personaList: List<String>,
