@@ -129,7 +129,7 @@ fun LoginScreen(
                 textAlign = TextAlign.Justify,
                 style = TextStyle(fontSize = 16.sp),
             )
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = { viewModel.login(selectedUserId, phone) },
