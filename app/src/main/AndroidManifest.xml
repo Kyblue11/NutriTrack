@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".NutriTrackApp"
         android:allowBackup="true"
@@ -13,26 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NutriTrack"
         tools:targetApi="31">
-        <activity
-            android:name=".InsightsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_insights"
-            android:theme="@style/Theme.NutriTrack" />
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false"
-            android:label="@string/title_activity_home"
-            android:theme="@style/Theme.NutriTrack" />
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="false"
-            android:label="@string/title_activity_dashboard"
-            android:theme="@style/Theme.NutriTrack" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.NutriTrack" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -50,7 +50,6 @@ dependencies {
     // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
     // See Add the KSP plugin to your project
     ksp("androidx.room:room-compiler:$room_version")
-    // If this project only uses Java source, use the Java annotationProcessor
     // No additional plugins are necessary
     annotationProcessor("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
@@ -61,6 +60,11 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
 
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+//    implementation("com.google.ai.client:generativeai:0.3.0") // TODO: ask dr Tan abt this
+    implementation("dev.shreyaspatil.generativeai:generativeai-google:0.9.0-1.1.0")
 
 
     implementation(libs.androidx.core.ktx)
