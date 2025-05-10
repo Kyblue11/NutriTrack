@@ -78,7 +78,8 @@ fun AppNavGraph() {
             HomeScreen(
                 userId = userId,
                 onEditClick = { navController.navigate("dashboard/$userId") },
-                onInsights = { navController.navigate("insights/$userId") }
+                onInsights = { navController.navigate("insights/$userId") },
+                navController = navController
             )
         }
         composable(
@@ -90,6 +91,7 @@ fun AppNavGraph() {
             InsightsScreen(
                 userId = userId,
                 vm = vm,
+                onReturnHome = { navController.navigate("home/$userId") },
                 navController = navController
             )
         }

@@ -15,8 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.aaronlamkongyew33521808.myapplication.R
 import com.aaronlamkongyew33521808.myapplication.viewmodel.HomeViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aaronlamkongyew33521808.myapplication.ui.navigation.BottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +27,8 @@ fun HomeScreen(
     userId: String,
     onEditClick: () -> Unit,
     onInsights: () -> Unit,
-    viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: HomeViewModel = viewModel(),
+    navController: NavHostController
 ) {
     // load once
     LaunchedEffect(userId) { viewModel.load(userId) }
@@ -55,10 +59,9 @@ fun HomeScreen(
                 },
             )
         },
-        bottomBar = {
-            // You can keep your BottomNavBar here if you like
-            // just pass onInsights to its Insights button
-        }
+
+        bottomBar = { BottomBar(navController, userId) }
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -73,7 +76,7 @@ fun HomeScreen(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(text =
-                "User $userId,  $userName" ,
+                "User $userId, $userName" ,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
