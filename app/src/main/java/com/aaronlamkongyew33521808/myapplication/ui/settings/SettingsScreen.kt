@@ -1,5 +1,6 @@
 package com.aaronlamkongyew33521808.myapplication.ui.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,8 +32,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import com.aaronlamkongyew33521808.myapplication.ui.navigation.BottomBar
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,9 +56,18 @@ fun SettingsScreen(
     onClinician: () -> Unit,
     navController: NavHostController
 ) {
-    val name    by viewModel.name.collectAsState()
-    val phone   by viewModel.phone.collectAsState()
-    val userId  by viewModel.id.collectAsState()
+    val name by viewModel.name.collectAsState()
+    val phone by viewModel.phone.collectAsState()
+    val userId by viewModel.id.collectAsState()
+    var editMode by remember { mutableStateOf(false) }
+    var newName by remember { mutableStateOf(name) }
+    var newPhone by remember { mutableStateOf(phone) }
+    var currentPass by remember { mutableStateOf("") }
+    var newPass by remember { mutableStateOf("") }
+    var confirmPass by remember { mutableStateOf("") }
+    var showClinicianDialog by remember { mutableStateOf(false) }
+    var passphrase by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -71,7 +93,19 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Text("ACCOUNT", style = MaterialTheme.typography.labelLarge)
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("ACCOUNT", style = MaterialTheme.typography.labelLarge)
+                IconButton(onClick = { editMode = !editMode }) {
+                    Icon(
+                        imageVector = if (editMode) Icons.Default.Check else Icons.Default.Edit,
+                        contentDescription = if (editMode) "Save" else "Edit"
+                    )
+                }
+            }
 
             Card(
                 Modifier
@@ -80,10 +114,43 @@ fun SettingsScreen(
                 shape = RoundedCornerShape(8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(name,  style = MaterialTheme.typography.titleMedium)
-                    Text(phone, style = MaterialTheme.typography.bodyMedium)
-                    Text("ID: $userId", style = MaterialTheme.typography.bodySmall)
+                if (!editMode) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(name, style = MaterialTheme.typography.titleMedium)
+                        Text(phone, style = MaterialTheme.typography.bodyMedium)
+                        Text("ID: $userId", style = MaterialTheme.typography.bodySmall)
+                    }
+                } else {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = newName,
+                            onValueChange = { newName = it },
+                            label = { Text("Name") }
+                        )
+                        OutlinedTextField(
+                            value = newPhone,
+                            onValueChange = { newPhone = it },
+                            label = { Text("Phone") }
+                        )
+                        OutlinedTextField(
+                            value = currentPass,
+                            onValueChange = { currentPass = it },
+                            label = { Text("Current Password") },
+                            visualTransformation = PasswordVisualTransformation()
+                        )
+                        OutlinedTextField(
+                            value = newPass,
+                            onValueChange = { newPass = it },
+                            label = { Text("New Password") },
+                            visualTransformation = PasswordVisualTransformation()
+                        )
+                        OutlinedTextField(
+                            value = confirmPass,
+                            onValueChange = { confirmPass = it },
+                            label = { Text("Confirm Password") },
+                            visualTransformation = PasswordVisualTransformation()
+                        )
+                    }
                 }
             }
 
@@ -96,12 +163,50 @@ fun SettingsScreen(
             Spacer(Modifier.height(16.dp))
             Text("OTHER SETTINGS", style = MaterialTheme.typography.labelLarge)
 
-            SettingsRow(label = "Logout",     onClick = onLogout)
-            SettingsRow(label = "Clinician Login", onClick = onClinician)
+            SettingsRow(label = "Logout", onClick = onLogout)
+            SettingsRow(label = "Clinician Login",  onClick = { showClinicianDialog = true })
+
+            if (showClinicianDialog) {
+                AlertDialog(
+                    onDismissRequest = { showClinicianDialog = false },
+                    title = { Text("Clinician Login") },
+                    text = {
+                        Column {
+                            OutlinedTextField(
+                                label = { Text("Clinician Key") },
+                                placeholder = { Text("Enter your clinician key") },
+                                value = passphrase,
+                                onValueChange = { passphrase = it },
+                                visualTransformation = PasswordVisualTransformation()
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            if (passphrase == "dollar-entry-apples") {
+                                onClinician()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Wrong passphrase",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            showClinicianDialog = false
+                        }) {
+                            Text("OK")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showClinicianDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
         }
     }
 }
-
 @Composable
 private fun SettingsRow(label: String, onClick: () -> Unit) {
     Row(
