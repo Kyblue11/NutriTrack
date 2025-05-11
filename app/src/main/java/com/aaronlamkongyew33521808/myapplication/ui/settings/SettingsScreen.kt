@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import com.aaronlamkongyew33521808.myapplication.ui.navigation.BottomBar
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
@@ -42,11 +43,14 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +72,7 @@ fun SettingsScreen(
     var showClinicianDialog by remember { mutableStateOf(false) }
     var passphrase by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -99,9 +104,39 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("ACCOUNT", style = MaterialTheme.typography.labelLarge)
-                IconButton(onClick = { editMode = !editMode }) {
+                IconButton(onClick = {
+                    if (!editMode) {
+                        // Enter edit mode
+                        editMode = true
+                    } else {
+                        // Attempt to save
+                        coroutineScope.launch {
+                            // Validate newPass == confirmPass first
+                            if (newPass != confirmPass) {
+                                Toast.makeText(context, "New passwords do not match", Toast.LENGTH_SHORT).show()
+                                return@launch
+                            }
+                            val success = viewModel.updateProfile( // TODO: make it so that editing name/phone only doesn't require password
+                                currentPass = currentPass,
+                                newName     = newName,
+                                newPhone    = newPhone,
+                                newPass     = newPass
+                            )
+                            if (success) {
+                                Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                                editMode = false
+                            } else {
+                                Toast.makeText(context, "Update failed: incorrect password", Toast.LENGTH_SHORT).show()
+                            }
+                            // Clear password fields
+                            currentPass = ""
+                            newPass     = ""
+                            confirmPass = ""
+                        }
+                    }
+                }) {
                     Icon(
-                        imageVector = if (editMode) Icons.Default.Check else Icons.Default.Edit,
+                        imageVector   = if (editMode) Icons.Default.Check else Icons.Default.Edit,
                         contentDescription = if (editMode) "Save" else "Edit"
                     )
                 }
