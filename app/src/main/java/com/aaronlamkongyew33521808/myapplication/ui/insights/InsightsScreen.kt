@@ -188,7 +188,10 @@ fun InsightsContent(
     }
 }
 
-
+// Disclaimer:
+// GenAi model ChatGPT 4.o was used to format and fix alignment of
+// this ScoreRowWithSlider composable, as well as performing calculations for
+// offsetY, activeWidth, stepSpacing and cornerRadius
 @Composable
 fun ScoreRowWithSlider(
     category: String,
@@ -207,8 +210,9 @@ fun ScoreRowWithSlider(
     val fraction = (score / maxScore).coerceIn(0.0, 1.0).toFloat()
 
     // Define dimensions based on whether this is the total score.
-    val sliderWidth = if (isTotalScore) 400.dp else 250.dp
+    val sliderWidth = if (isTotalScore) 400.dp else 190.dp
     val sliderHeight = if (isTotalScore) 48.dp else 24.dp
+    val scoreTextWidth = 50.dp // Fixed width for score text
 
     // Optionally, total slider might have more step indicators. Using 10 steps for total, 5 otherwise.
     val stepCount = if (isTotalScore) 10 else 5
@@ -285,11 +289,12 @@ fun ScoreRowWithSlider(
             )
         }
 
-        // Display the current score for subscores.
+        // Display the current score for subscores with a fixed width.
         if (!isTotalScore) {
             Text(
                 text = "${"%.1f".format(score)}/${"%.0f".format(maxScore)}",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.width(scoreTextWidth) // Fixed width ensures alignment
             )
         }
     }

@@ -101,14 +101,6 @@ fun NutriCoachScreen(
                     }
                 }
 
-//                fruits.filter { it.name.contains(fruitQuery, ignoreCase = true) }.forEach {
-//                    Card(modifier = Modifier.padding(8.dp)) {
-//                        Column {
-//                            Text(it.name, fontWeight = FontWeight.Bold)
-//                            Text("Calories: ${it.nutritions.calories}")
-//                        }
-//                    }
-//                }
             } else {
                 Image(
                     painter = rememberAsyncImagePainter("https://picsum.photos/400"), // check Coil Dependency in build.gradle

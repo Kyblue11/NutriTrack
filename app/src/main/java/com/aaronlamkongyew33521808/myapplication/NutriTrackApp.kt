@@ -18,9 +18,9 @@ class NutriTrackApp : Application() {
         val db = AppDatabase.getDatabase(this)
         CoroutineScope(Dispatchers.IO).launch {
             val dao = db.userDao()
-            if (dao.countUsers() == 0) {
+            if (dao.countUsers() == 0) { // Only load CSV if no users exist in the database
                 val list = loadCSV(this@NutriTrackApp)
-                dao.insertUsers(list.map { UserEntity.fromUserData(it) }) // TODO: check if csv is loaded every time the app is launched
+                dao.insertUsers(list.map { UserEntity.fromUserData(it) })
             }
             val qDao = db.questionnaireDao()
             // TODO: use qDao?
@@ -41,6 +41,7 @@ fun loadCSV(context: Context): List<UserData> {
                 allLines.drop(1).forEach { line ->
                     val tokens = line.split(",")
                     userList.add(
+                        // TODO: use if elses to categorize by gender
                         UserData(
                             phoneNumber = tokens[0].trim().removePrefix("\""),
                             userId = tokens[1].trim(),
