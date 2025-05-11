@@ -49,8 +49,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+
+import  com.aaronlamkongyew33521808.myapplication.ui.register.isPasswordSecure
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,37 +109,58 @@ fun SettingsScreen(
                 Text("ACCOUNT", style = MaterialTheme.typography.labelLarge)
                 IconButton(onClick = {
                     if (!editMode) {
+                        newName = name
+                        newPhone = phone
                         // Enter edit mode
                         editMode = true
                     } else {
                         // Attempt to save
                         coroutineScope.launch {
-                            // Validate newPass == confirmPass first
-                            if (newPass != confirmPass) {
-                                Toast.makeText(context, "New passwords do not match", Toast.LENGTH_SHORT).show()
-                                return@launch
-                            }
-                            val success = viewModel.updateProfile( // TODO: make it so that editing name/phone only doesn't require password
-                                currentPass = currentPass,
-                                newName     = newName,
-                                newPhone    = newPhone,
-                                newPass     = newPass
-                            )
-                            if (success) {
-                                Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
-                                editMode = false
+                            if (currentPass.isEmpty() && newPass.isEmpty() && confirmPass.isEmpty()) {
+                                // Update only name and phone
+                                val success = viewModel.updateProfile(
+                                    newName = newName.ifBlank { name },
+                                    newPhone = newPhone.ifBlank { phone }
+                                )
+                                if (success) {
+                                    Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                                    editMode = false
+                                } else {
+                                    Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show()
+                                }
                             } else {
-                                Toast.makeText(context, "Update failed: incorrect password", Toast.LENGTH_SHORT).show()
+                                // Validate password fields
+                                if (newPass != confirmPass) {
+                                    Toast.makeText(context, "New passwords do not match", Toast.LENGTH_SHORT).show()
+                                    return@launch
+                                }
+                                // new password is empty, keep old password
+                                if (newPass.isEmpty() || !isPasswordSecure(newPass)) {
+                                    Toast.makeText(context, "New password is invalid or insecure!", Toast.LENGTH_SHORT).show()
+                                    return@launch
+                                }
+                                val success = viewModel.updateProfile(
+                                    currentPass = currentPass,
+                                    newName = newName.ifBlank { name },
+                                    newPhone = newPhone.ifBlank { phone },
+                                    newPass = newPass
+                                )
+                                if (success) {
+                                    Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                                    editMode = false
+                                } else {
+                                    Toast.makeText(context, "Update failed: incorrect current password", Toast.LENGTH_SHORT).show()
+                                }
                             }
                             // Clear password fields
                             currentPass = ""
-                            newPass     = ""
+                            newPass = ""
                             confirmPass = ""
                         }
                     }
                 }) {
                     Icon(
-                        imageVector   = if (editMode) Icons.Default.Check else Icons.Default.Edit,
+                        imageVector = if (editMode) Icons.Default.Check else Icons.Default.Edit,
                         contentDescription = if (editMode) "Save" else "Edit"
                     )
                 }
@@ -167,6 +191,12 @@ fun SettingsScreen(
                             onValueChange = { newPhone = it },
                             label = { Text("Phone") }
                         )
+                        Spacer(Modifier.height(4.dp))
+                        Divider(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                            thickness = 1.dp,
+                        )
+                        Spacer(Modifier.height(4.dp))
                         OutlinedTextField(
                             value = currentPass,
                             onValueChange = { currentPass = it },
@@ -184,6 +214,16 @@ fun SettingsScreen(
                             onValueChange = { confirmPass = it },
                             label = { Text("Confirm Password") },
                             visualTransformation = PasswordVisualTransformation()
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text( text =
+                            """
+                                If you do not wish to change your password, leave the 3 password fields blank.
+                                If you wish to change your password, please enter your current password and the new password twice.
+                            """.trimIndent(),
+                            style = MaterialTheme.typography.bodySmall,
+                            textAlign = TextAlign.Justify,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
                 }

@@ -32,6 +32,27 @@ class SettingsViewModel(
         }
     }
 
+    suspend fun updateProfile(
+        newName: String,
+        newPhone: String
+    ): Boolean {
+
+        val user = dao.getUserById(userId) ?: return false
+
+        // 1) Build updated entity and save
+        val updated = user.copy(
+            name         = newName,
+            phoneNumber  = newPhone
+        )
+        dao.insertUsers(listOf(updated))
+
+        // 2) Refresh state flows
+        _name.value  = updated.name ?: updated.userId
+        _phone.value = updated.phoneNumber
+
+        return true
+    }
+
     /** Returns true if update succeeded (password matched), false otherwise */
     suspend fun updateProfile(
         currentPass: String,
