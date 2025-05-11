@@ -17,12 +17,14 @@ import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.login.LoginScreen
 import com.aaronlamkongyew33521808.myapplication.ui.nutricoach.NutriCoachScreen
 import com.aaronlamkongyew33521808.myapplication.ui.register.RegisterScreen
+import com.aaronlamkongyew33521808.myapplication.ui.settings.SettingsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.welcome.WelcomeScreen
 import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModelFactory
 import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
+import com.aaronlamkongyew33521808.myapplication.viewmodel.SettingsViewModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -34,6 +36,8 @@ object Routes {
     const val Home = "home/{userId}"
     const val Insights = "insights/{userId}"
     const val NutriCoach = "coach/{userId}"
+    const val Settings = "settings/{userId}"
+    const val ClinicianLogin = "clinician_login"
 }
 
 @Composable
@@ -125,9 +129,9 @@ fun AppNavGraph() {
         }
         composable(
             Routes.NutriCoach, arguments = listOf(
-            navArgument("userId")
-            { type = NavType.StringType }
-        )
+                navArgument("userId")
+                { type = NavType.StringType }
+            )
         )
         { back ->
             val userId = back.arguments!!.getString("userId")!!
@@ -150,6 +154,30 @@ fun AppNavGraph() {
             NutriCoachScreen(
                 userId,
                 viewModel = vm,
+                navController = navController
+            )
+        }
+        composable(
+            route = Routes.Settings,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId").orEmpty()
+            val vm: SettingsViewModel = viewModel(
+                factory = SettingsViewModel.Factory(
+                    AppDatabase.getDatabase(LocalContext.current).userDao(), userId
+                )
+            )
+            SettingsScreen(
+                viewModel = vm,
+                onLogout = {
+                    // clear any session if you have one, then:
+                    navController.navigate(Routes.Login) {
+                        popUpTo(Routes.Welcome) { inclusive = false }
+                    }
+                },
+                onClinician = {
+                    navController.navigate(Routes.ClinicianLogin)
+                },
                 navController = navController
             )
         }

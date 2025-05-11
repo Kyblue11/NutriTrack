@@ -138,7 +138,11 @@ fun HomeScreen(
             }
 
             Spacer(Modifier.height(24.dp))
-
+            Divider(
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
             Text(
                 text = "What is the Food Quality Score?",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),

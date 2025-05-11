@@ -3,6 +3,7 @@ package com.aaronlamkongyew33521808.myapplication.ui.nutricoach
 import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -60,7 +62,14 @@ fun NutriCoachScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("NutriCoach") }) },
+        topBar = { TopAppBar(
+            title = {
+            Text(
+                text = "NutriCoach",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+        },) },
 
         bottomBar = { BottomBar(navController, userId) }
 
@@ -109,6 +118,7 @@ fun NutriCoachScreen(
                 )
             }
 
+            Spacer(Modifier.height(24.dp))
             Divider(modifier = Modifier.padding(vertical = 16.dp))
 
             Text("🤖 AI Motivational Tip")

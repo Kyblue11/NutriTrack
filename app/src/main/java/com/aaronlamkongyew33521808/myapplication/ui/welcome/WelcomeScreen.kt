@@ -59,7 +59,7 @@ fun WelcomeScreen(onLetsGo: () -> Unit) {
                 style = TextStyle(fontSize = 16.sp),
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = onLetsGo,
