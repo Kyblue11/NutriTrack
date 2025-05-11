@@ -1,29 +1,39 @@
 package com.aaronlamkongyew33521808.myapplication.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
+import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
+import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
 import com.aaronlamkongyew33521808.myapplication.ui.dashboard.DashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
 import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.login.LoginScreen
+import com.aaronlamkongyew33521808.myapplication.ui.nutricoach.NutriCoachScreen
 import com.aaronlamkongyew33521808.myapplication.ui.register.RegisterScreen
 import com.aaronlamkongyew33521808.myapplication.ui.welcome.WelcomeScreen
 import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
+import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModel
+import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModelFactory
 import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 object Routes {
     const val Welcome = "welcome"
     const val Login = "login"
     const val Register = "register"
-    const val Dashboard = "dashboard/{userId}" // pass userId
+    const val Dashboard = "dashboard/{userId}"
     const val Home = "home/{userId}"
     const val Insights = "insights/{userId}"
+    const val NutriCoach = "coach/{userId}"
 }
 
 @Composable
@@ -43,11 +53,12 @@ fun AppNavGraph() {
             val vm: LoginViewModel = viewModel()
             LoginScreen(
                 viewModel = vm,
-                onLoginSuccess = { id -> navController.navigate("dashboard/$id")
+                onLoginSuccess = { id ->
+                    navController.navigate("dashboard/$id")
 //                    {
 //                        popUpTo(Routes.Login) { inclusive = true } // TODO: should i remove this?
 //                    }
-                 },
+                },
                 onRegister = { navController.navigate(Routes.Register) }
             )
         }
@@ -55,9 +66,11 @@ fun AppNavGraph() {
             val vm: RegisterViewModel = viewModel()
             RegisterScreen(
                 viewModel = vm,
-                onDone = { navController.navigate(Routes.Login) {
-                    popUpTo(Routes.Register) { inclusive = true }
-                } }
+                onDone = {
+                    navController.navigate(Routes.Login) {
+                        popUpTo(Routes.Register) { inclusive = true }
+                    }
+                }
             )
         }
         composable(
@@ -78,7 +91,14 @@ fun AppNavGraph() {
             HomeScreen(
                 userId = userId,
                 onEditClick = { navController.navigate("dashboard/$userId") },
-                onInsights = { navController.navigate("insights/$userId") },
+                onInsights = {
+                    navController.navigate("insights/$userId")
+                    {
+                        popUpTo(Routes.Home) {
+                            inclusive = true
+                        } // needed to prevent bug [Insights Screen to Home Screen via bottom bar]
+                    }
+                },
                 navController = navController
             )
         }
@@ -91,7 +111,45 @@ fun AppNavGraph() {
             InsightsScreen(
                 userId = userId,
                 vm = vm,
-                onReturnHome = { navController.navigate("home/$userId") },
+                onReturnHome = {
+                    navController.navigate("home/$userId")
+                    {
+                        popUpTo(Routes.Insights) {
+                            inclusive = true
+                        } // needed to prevent bug [Home Screen to Insights Screen via bottom bar]
+                    }
+
+                },
+                navController = navController
+            )
+        }
+        composable(
+            Routes.NutriCoach, arguments = listOf(
+            navArgument("userId")
+            { type = NavType.StringType }
+        )
+        )
+        { back ->
+            val userId = back.arguments!!.getString("userId")!!
+            val context = LocalContext.current
+
+            // TODO: is building your repo here bad:
+            val db = AppDatabase.getDatabase(context)
+            val dao = db.nutriCoachDao()
+            val api = Retrofit.Builder()
+                .baseUrl("https://www.fruityvice.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(FruityViceApi::class.java)
+            val repo = NutriCoachRepository(api, dao)
+
+            val vm: NutriCoachViewModel = viewModel(
+                factory = NutriCoachViewModelFactory(repo, context)
+            )
+
+            NutriCoachScreen(
+                userId,
+                viewModel = vm,
                 navController = navController
             )
         }

@@ -66,6 +66,8 @@ dependencies {
 //    implementation("com.google.ai.client:generativeai:0.3.0") // TODO: ask dr Tan abt this
     implementation("dev.shreyaspatil.generativeai:generativeai-google:0.9.0-1.1.0")
 
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
