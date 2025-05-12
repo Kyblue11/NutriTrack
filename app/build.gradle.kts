@@ -22,7 +22,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField ("String", "apiKey", "\"AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE\"") // TODO: under buildTypes or Android:defaultConfig
+        }
         release {
+            buildConfigField ("String", "apiKey", "\"AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -39,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // TODO: check if this is bad
     }
 }
 

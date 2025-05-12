@@ -11,7 +11,7 @@ import com.aaronlamkongyew33521808.myapplication.data.api.Fruit
 import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
 import com.aaronlamkongyew33521808.myapplication.data.entity.NutriCoachTip
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
-import dev.shreyaspatil.ai.client.generativeai.BuildConfig
+import com.aaronlamkongyew33521808.myapplication.BuildConfig
 import dev.shreyaspatil.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +47,7 @@ class NutriCoachViewModel(
             try {
                 val model = GenerativeModel(
                     modelName = "gemini-1.5-flash",
-                    apiKey = "AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE"
+                    apiKey = BuildConfig.apiKey
                 )
                 val response = model.generateContent(prompt)
                 val tip = response.text ?: return@launch

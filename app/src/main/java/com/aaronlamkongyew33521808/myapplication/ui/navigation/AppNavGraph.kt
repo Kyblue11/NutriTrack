@@ -13,6 +13,8 @@ import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
+import com.aaronlamkongyew33521808.myapplication.ui.clinician.ClinicianDashboardScreen
+import com.aaronlamkongyew33521808.myapplication.ui.clinician.ClinicianLoginScreen
 import com.aaronlamkongyew33521808.myapplication.ui.dashboard.DashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
 import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
@@ -39,7 +41,8 @@ object Routes {
     const val Insights = "insights/{userId}"
     const val NutriCoach = "coach/{userId}"
     const val Settings = "settings/{userId}"
-    const val ClinicianLogin = "clinician_login"
+//    const val ClinicianLogin     = "clinician_login"
+    const val ClinicianDashboard = "clinician_dashboard"
 }
 
 @Composable
@@ -187,9 +190,22 @@ fun AppNavGraph() {
                     }
                 },
                 onClinician = {
-                    navController.navigate(Routes.ClinicianLogin)
+                    navController.navigate(Routes.ClinicianDashboard)
                 },
                 navController = navController
+            )
+        }
+//        composable(Routes.ClinicianLogin) { // TODO: do i REALLY need an inbetween screen?
+//            ClinicianLoginScreen(
+//                onCancel = { navController.popBackStack() },
+//                onSuccess = { navController.navigate(Routes.ClinicianDashboard) }
+//            )
+//        }
+
+        // 2B) Clinician Dashboard
+        composable(Routes.ClinicianDashboard) {
+            ClinicianDashboardScreen(
+                onDone = { navController.popBackStack() }
             )
         }
     }
