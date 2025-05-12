@@ -117,7 +117,7 @@ fun NutriCoachScreen(
                     model ="https://picsum.photos/400", // check Coil Dependency in build.gradle
                     // TODO: check why is image not random?
                     contentDescription = "random food pic",
-                    modifier = Modifier.fillMaxWidth().height(400.dp)
+                    modifier = Modifier.fillMaxWidth().height(350.dp)
                 )
             }
 
