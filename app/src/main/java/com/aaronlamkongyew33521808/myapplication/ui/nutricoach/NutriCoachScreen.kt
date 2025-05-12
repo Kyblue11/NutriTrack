@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil3.compose.AsyncImage
 import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.aaronlamkongyew33521808.myapplication.data.api.Fruit
@@ -64,19 +65,19 @@ fun NutriCoachScreen(
     Scaffold(
         topBar = { TopAppBar(
             title = {
-            Text(
-                text = "NutriCoach",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
-        },) },
+                Text(
+                    text = "NutriCoach",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            },) },
 
         bottomBar = { BottomBar(navController, userId) }
 
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
-            Text("Fruit Name")
             if (isFruitScoreLow(userId)) {
+                Text("Fruit Name")
                 TextField(
                     value = fruitQuery,
                     onValueChange = { fruitQuery = it },
@@ -86,7 +87,7 @@ fun NutriCoachScreen(
 
                     filtered = fruits.filter {
                         it.name.contains(fruitQuery.trim(), ignoreCase = true) &&
-                        fruitQuery.trim().length == it.name.length
+                                fruitQuery.trim().length == it.name.length
                     }
 
                 }) { Text("Details") }
@@ -111,10 +112,12 @@ fun NutriCoachScreen(
                 }
 
             } else {
-                Image(
-                    painter = rememberAsyncImagePainter("https://picsum.photos/400"), // check Coil Dependency in build.gradle
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth().height(200.dp)
+                Text("You are doing great! Here's a motivational picture.")
+                AsyncImage(
+                    model ="https://picsum.photos/400", // check Coil Dependency in build.gradle
+                    // TODO: check why is image not random?
+                    contentDescription = "random food pic",
+                    modifier = Modifier.fillMaxWidth().height(400.dp)
                 )
             }
 
@@ -168,6 +171,6 @@ fun NutriCoachScreen(
 
 fun isFruitScoreLow(userId: String): Boolean {
     // Lookup score from ViewModel or DB and return true if below threshold
-    return true // TODO: Replace with actual check
+    return false // TODO: Replace with actual check
 }
 
