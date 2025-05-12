@@ -1,6 +1,7 @@
 package com.aaronlamkongyew33521808.myapplication.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -8,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
@@ -43,7 +45,16 @@ object Routes {
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.Welcome) {
+    val currentUser   by AuthManager.userId
+    // if there's a user, skip straight in; otherwise show welcome/login
+    val startDestination = if (currentUser != null) {
+        "dashboard/$currentUser"
+    } else {
+        Routes.Welcome
+    }
+
+
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Routes.Welcome) {
             WelcomeScreen {

@@ -51,6 +51,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import kotlinx.coroutines.launch
 
 import  com.aaronlamkongyew33521808.myapplication.ui.register.isPasswordSecure
@@ -238,7 +239,10 @@ fun SettingsScreen(
             Spacer(Modifier.height(16.dp))
             Text("OTHER SETTINGS", style = MaterialTheme.typography.labelLarge)
 
-            SettingsRow(label = "Logout", onClick = onLogout)
+            SettingsRow(label = "Logout", onClick = {
+                AuthManager.logout(context)
+                onLogout()
+            })
             SettingsRow(label = "Clinician Login",  onClick = { showClinicianDialog = true })
 
             if (showClinicianDialog) {

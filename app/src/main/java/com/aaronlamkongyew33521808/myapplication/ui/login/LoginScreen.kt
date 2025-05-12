@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aaronlamkongyew33521808.myapplication.R
+import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +64,7 @@ fun LoginScreen(
         when (result) {
             true -> {
                 Toast.makeText(context, "Login successful", Toast.LENGTH_LONG).show()
+                AuthManager.login(selectedUserId, context)
                 onLoginSuccess(selectedUserId)
             }
             false -> Toast.makeText(context, "Invalid credentials", Toast.LENGTH_LONG).show() // TODO: toast should be able to pop up multiple times
