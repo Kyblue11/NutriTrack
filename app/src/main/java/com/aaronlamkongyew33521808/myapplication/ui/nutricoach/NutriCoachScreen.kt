@@ -114,7 +114,7 @@ fun NutriCoachScreen(
             } else {
                 Text("You are doing great! Here's a motivational picture.")
                 AsyncImage(
-                    model ="https://picsum.photos/400", // check Coil Dependency in build.gradle
+                    model = "https://picsum.photos/400?random=${System.currentTimeMillis()}", // check Coil Dependency in build.gradle
                     // TODO: check why is image not random?
                     contentDescription = "random food pic",
                     modifier = Modifier.fillMaxWidth().height(350.dp)
