@@ -78,96 +78,98 @@ fun NutriCoachScreen(
         bottomBar = { BottomBar(navController, userId) }
 
     ) { padding ->
-        Column(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
-            if (isOptimal == false || isOptimal == null) {
-                Text("Fruit Name")
-                TextField(
-                    value = fruitQuery,
-                    onValueChange = { fruitQuery = it },
-                    label = { Text("e.g. banana") },
-                    singleLine = true
-                )
-                Button(onClick = { /* filter fruits */
+        LazyColumn(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
+            item {
 
-                    filtered = fruits.filter {
-                        it.name.contains(fruitQuery.trim(), ignoreCase = true) &&
-                                fruitQuery.trim().length == it.name.length
-                    }
+                if (isOptimal == false || isOptimal == null) {
+                    Text("Fruit Name")
+                    TextField(
+                        value = fruitQuery,
+                        onValueChange = { fruitQuery = it },
+                        label = { Text("e.g. banana") },
+                        singleLine = true
+                    )
+                    Button(onClick = { /* filter fruits */
 
-                }) { Text("Details") }
-
-                // Display the filtered fruits
-                if (filtered.isNotEmpty()) {
-                    filtered.forEach { fruit ->
-                        Card(modifier = Modifier.padding(8.dp)) {
-                            Column {
-                                Text(fruit.name, fontWeight = FontWeight.Bold)
-                                Text("family: ${fruit.family}")
-                                Text("Calories: ${fruit.nutritions.calories}")
-                                Text("Fat: ${fruit.nutritions.fat}")
-                                Text("Sugar: ${fruit.nutritions.sugar}")
-                                Text("Carbohydrates: ${fruit.nutritions.carbohydrates}")
-                                Text("Protein: ${fruit.nutritions.protein}")
-
-
-                            }
+                        filtered = fruits.filter {
+                            it.name.contains(fruitQuery.trim(), ignoreCase = true) &&
+                                    fruitQuery.trim().length == it.name.length
                         }
-                    }
-                }
 
-            } else {
-                Text("You are doing great! Here's a motivational picture.")
-                AsyncImage(
-                    model = "https://picsum.photos/400?random=${System.currentTimeMillis()}", // check Coil Dependency in build.gradle
-                    // TODO: check why is image not random?
-                    contentDescription = "random food pic",
-                    modifier = Modifier.fillMaxWidth().height(350.dp)
-                )
-            }
+                    }) { Text("Details") }
 
-            Spacer(Modifier.height(24.dp))
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+                    // Display the filtered fruits
+                    if (filtered.isNotEmpty()) {
+                        filtered.forEach { fruit ->
+                            Card(modifier = Modifier.padding(8.dp)) {
+                                Column {
+                                    Text(fruit.name, fontWeight = FontWeight.Bold)
+                                    Text("family: ${fruit.family}")
+                                    Text("Calories: ${fruit.nutritions.calories}")
+                                    Text("Fat: ${fruit.nutritions.fat}")
+                                    Text("Sugar: ${fruit.nutritions.sugar}")
+                                    Text("Carbohydrates: ${fruit.nutritions.carbohydrates}")
+                                    Text("Protein: ${fruit.nutritions.protein}")
 
-            Text("🤖 AI Motivational Tip")
-            Button(onClick = {
-                viewModel.generateTip(
-                    userId,
-                    "Generate a short encouraging message to help someone improve their fruit intake. They currently scored low."
-                )
-            }) {
-                Text("Get AI Tip")
-            }
 
-            genTip?.let {
-                Card(modifier = Modifier.padding(8.dp)) {
-                    Text(it, Modifier.padding(8.dp))
-                }
-            }
-
-            Button(onClick = { showTipsDialog = true }) {
-                Text("Show All Tips")
-            }
-
-            if (showTipsDialog) {
-                AlertDialog(
-                    onDismissRequest = { showTipsDialog = false },
-                    title = { Text("AI Tip History") },
-                    text = {
-                        LazyColumn {
-                            items(
-                                tips) { tip ->
-                                Card(modifier = Modifier.padding(8.dp)) {
-                                    Text(tip.tip, Modifier.padding(8.dp))
                                 }
                             }
                         }
-                    },
-                    confirmButton = {
-                        TextButton(onClick = { showTipsDialog = false }) {
-                            Text("Close")
-                        }
                     }
-                )
+
+                } else {
+                    Text("You are doing great! Here's a motivational picture.")
+                    AsyncImage(
+                        model = "https://picsum.photos/400?random=${System.currentTimeMillis()}", // check Coil Dependency in build.gradle
+                        // TODO: check why is image not random?
+                        contentDescription = "random food pic",
+                        modifier = Modifier.fillMaxWidth().height(350.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(24.dp))
+                Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+                Text("🤖 AI Motivational Tip")
+                Button(onClick = {
+                    viewModel.generateTip(
+                        userId
+                    )
+                }) {
+                    Text("Get AI Tip")
+                }
+
+                genTip?.let {
+                    Card(modifier = Modifier.padding(8.dp)) {
+                        Text(it, Modifier.padding(8.dp))
+                    }
+                }
+
+                Button(onClick = { showTipsDialog = true }) {
+                    Text("Show All Tips")
+                }
+
+                if (showTipsDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showTipsDialog = false },
+                        title = { Text("AI Tip History") },
+                        text = {
+                            LazyColumn {
+                                items(
+                                    tips) { tip ->
+                                    Card(modifier = Modifier.padding(8.dp)) {
+                                        Text(tip.tip, Modifier.padding(8.dp))
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { showTipsDialog = false }) {
+                                Text("Close")
+                            }
+                        }
+                    )
+                }
             }
         }
     }

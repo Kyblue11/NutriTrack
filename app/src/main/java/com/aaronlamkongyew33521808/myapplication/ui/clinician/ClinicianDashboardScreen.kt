@@ -50,7 +50,11 @@ fun ClinicianDashboardScreen(
     val insights  by viewModel.insights.collectAsState(initial = emptyList())
     val loading   by viewModel.loading.collectAsState()
 
-    LaunchedEffect(Unit) { viewModel.loadAverages() }
+    LaunchedEffect(Unit) {
+        viewModel.loadAverages()
+        viewModel.loadAveragesForFats()
+        viewModel.loadAveragesForHealthyFoods()
+    }
 
     Scaffold(
         topBar = {

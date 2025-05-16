@@ -14,6 +14,7 @@ import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
 import com.aaronlamkongyew33521808.myapplication.repository.HomeRepository
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
+import com.aaronlamkongyew33521808.myapplication.repository.QuestionnaireRepository
 import com.aaronlamkongyew33521808.myapplication.ui.clinician.ClinicianDashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.dashboard.DashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
@@ -164,11 +165,15 @@ fun AppNavGraph() {
             val homeRepo = HomeRepository(
                 db.userDao()
             )
+            val quesRepo = QuestionnaireRepository(
+                db.questionnaireDao()
+            )
 
             val vm: NutriCoachViewModel = viewModel(
                 factory = NutriCoachViewModelFactory(
                     repo,
                     homeRepo,
+                    quesRepo
                 )
             )
 
