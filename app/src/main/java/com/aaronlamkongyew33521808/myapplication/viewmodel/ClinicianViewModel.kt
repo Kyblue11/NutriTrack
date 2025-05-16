@@ -26,8 +26,12 @@ class ClinicianViewModel(private val dao: UserDao) : ViewModel() {
 
     fun loadAverages() = viewModelScope.launch(Dispatchers.IO) {
         val users = dao.getAllUsers()
-        _avgMale.value   = users.map { it.HEIFAtotalscoreMale   }.average()
-        _avgFemale.value = users.map { it.HEIFAtotalscoreFemale }.average()
+        _avgMale.value = users.filter { it.sex == "Male" }
+            .map { it.HEIFAtotalscoreMale }
+            .average()
+        _avgFemale.value = users.filter { it.sex == "Female" }
+            .map { it.HEIFAtotalscoreFemale }
+            .average()
     }
 
     fun findPatterns() = viewModelScope.launch(Dispatchers.IO) {

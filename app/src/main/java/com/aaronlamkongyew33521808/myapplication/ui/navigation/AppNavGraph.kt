@@ -12,9 +12,9 @@ import androidx.navigation.navArgument
 import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
+import com.aaronlamkongyew33521808.myapplication.repository.HomeRepository
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
 import com.aaronlamkongyew33521808.myapplication.ui.clinician.ClinicianDashboardScreen
-import com.aaronlamkongyew33521808.myapplication.ui.clinician.ClinicianLoginScreen
 import com.aaronlamkongyew33521808.myapplication.ui.dashboard.DashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
 import com.aaronlamkongyew33521808.myapplication.ui.insights.InsightsScreen
@@ -160,9 +160,12 @@ fun AppNavGraph() {
                 .build()
                 .create(FruityViceApi::class.java)
             val repo = NutriCoachRepository(api, dao)
+            val homeRepo = HomeRepository(
+                db.userDao()
+            )
 
             val vm: NutriCoachViewModel = viewModel(
-                factory = NutriCoachViewModelFactory(repo, context)
+                factory = NutriCoachViewModelFactory(repo, homeRepo, context)
             )
 
             NutriCoachScreen(
@@ -195,14 +198,7 @@ fun AppNavGraph() {
                 navController = navController
             )
         }
-//        composable(Routes.ClinicianLogin) { // TODO: do i REALLY need an inbetween screen?
-//            ClinicianLoginScreen(
-//                onCancel = { navController.popBackStack() },
-//                onSuccess = { navController.navigate(Routes.ClinicianDashboard) }
-//            )
-//        }
 
-        // 2B) Clinician Dashboard
         composable(Routes.ClinicianDashboard) {
             ClinicianDashboardScreen(
                 onDone = { navController.popBackStack() }

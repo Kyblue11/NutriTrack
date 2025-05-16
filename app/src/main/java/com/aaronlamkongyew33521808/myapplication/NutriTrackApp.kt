@@ -54,6 +54,10 @@ fun loadCSV(context: Context): List<UserData> {
                             vegetablesHEIFAscoreFemale = tokens[9].toDoubleOrNull() ?: 0.0,
                             fruitHEIFAscoreMale = tokens[19].toDoubleOrNull() ?: 0.0,
                             fruitHEIFAscoreFemale = tokens[20].toDoubleOrNull() ?: 0.0,
+
+                            fruitServeSize = tokens[21].toDoubleOrNull() ?: 0.0,
+                            fruitVariationScore = tokens[22].toDoubleOrNull() ?: 0.0,
+
                             grainsAndCerealsHEIFAscoreMale = tokens[29].toDoubleOrNull() ?: 0.0,
                             grainsAndCerealsHEIFAscoreFemale = tokens[30].toDoubleOrNull() ?: 0.0,
                             wholegrainsHEIFAscoreMale = tokens[33].toDoubleOrNull() ?: 0.0,
@@ -97,6 +101,10 @@ data class UserData(
     val vegetablesHEIFAscoreFemale: Double,
     val fruitHEIFAscoreMale: Double,
     val fruitHEIFAscoreFemale: Double,
+
+    val fruitServeSize: Double,
+    val fruitVariationScore: Double,
+
     val grainsAndCerealsHEIFAscoreMale: Double,
     val grainsAndCerealsHEIFAscoreFemale: Double,
     val wholegrainsHEIFAscoreMale: Double,

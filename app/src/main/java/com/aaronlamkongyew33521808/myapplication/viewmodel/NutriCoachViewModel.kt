@@ -12,6 +12,7 @@ import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
 import com.aaronlamkongyew33521808.myapplication.data.entity.NutriCoachTip
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
 import com.aaronlamkongyew33521808.myapplication.BuildConfig
+import com.aaronlamkongyew33521808.myapplication.repository.HomeRepository
 import dev.shreyaspatil.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class NutriCoachViewModel(
     private val repo: NutriCoachRepository,
+    private val homeRepo: HomeRepository,
     private val context: Context
 ) : ViewModel() {
     private val _fruits = MutableStateFlow<List<Fruit>>(emptyList())
@@ -32,6 +34,9 @@ class NutriCoachViewModel(
 
     private val _genTip = MutableStateFlow<String?>(null)
     val genTip: StateFlow<String?> = _genTip
+
+    private val _isFruitOptimal = MutableStateFlow<Boolean?>(null)
+    val isFruitOptimal: StateFlow<Boolean?> = _isFruitOptimal
 
     suspend fun fetchFruits() { // TODO: is this bad practice?
         try {
@@ -67,6 +72,16 @@ class NutriCoachViewModel(
             _tips.value = repo.getTips(userId)
         }
     }
+
+    fun checkFruitOptimal(userId: String) {
+        viewModelScope.launch {
+            val user = homeRepo.getUserById(userId)
+            val optimal = (user?.fruitServeSize ?: 0.0) >= 1 && // TODO: more than the average, or equal to max?
+                    (user?.fruitVariationScore ?: 0.0) >= 1
+            _isFruitOptimal.value = optimal
+        }
+    }
+
 }
 
 //class NutriCoachViewModel(application: Application)

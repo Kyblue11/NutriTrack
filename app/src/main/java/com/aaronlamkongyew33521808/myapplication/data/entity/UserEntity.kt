@@ -45,7 +45,10 @@ data class UserEntity(
 
     // TODO: check this
     @ColumnInfo val name: String?,
-    @ColumnInfo val passwordHash: String?
+    @ColumnInfo val passwordHash: String?,
+
+    val fruitServeSize: Double,
+    val fruitVariationScore: Double,
 ) {
     companion object {
         /** Map from your CSV-backed UserData into the Room entity. */
@@ -83,7 +86,10 @@ data class UserEntity(
             discretionaryHEIFAscoreFemale = u.discretionaryHEIFAscoreFemale,
 
             name = null,
-            passwordHash = null
+            passwordHash = null,
+
+            fruitServeSize = u.fruitServeSize,
+            fruitVariationScore = u.fruitVariationScore,
         )
     }
 }

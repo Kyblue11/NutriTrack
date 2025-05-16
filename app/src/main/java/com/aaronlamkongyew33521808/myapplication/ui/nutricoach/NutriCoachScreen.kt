@@ -57,9 +57,12 @@ fun NutriCoachScreen(
 
     var filtered by remember { mutableStateOf<List<Fruit>>(emptyList()) }
 
+    val isOptimal by viewModel.isFruitOptimal.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.fetchFruits()
         viewModel.loadTipHistory(userId)
+        viewModel.checkFruitOptimal(userId)
     }
 
     Scaffold(
@@ -76,12 +79,13 @@ fun NutriCoachScreen(
 
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
-            if (isFruitScoreLow(userId)) {
+            if (isOptimal == false || isOptimal == null) {
                 Text("Fruit Name")
                 TextField(
                     value = fruitQuery,
                     onValueChange = { fruitQuery = it },
                     label = { Text("e.g. banana") },
+                    singleLine = true
                 )
                 Button(onClick = { /* filter fruits */
 
@@ -168,9 +172,3 @@ fun NutriCoachScreen(
         }
     }
 }
-
-fun isFruitScoreLow(userId: String): Boolean {
-    // Lookup score from ViewModel or DB and return true if below threshold
-    return false // TODO: Replace with actual check
-}
-
