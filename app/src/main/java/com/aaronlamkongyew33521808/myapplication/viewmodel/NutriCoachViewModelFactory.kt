@@ -9,12 +9,11 @@ import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
 class NutriCoachViewModelFactory(
     private val repo: NutriCoachRepository,
     private val homeRepo: HomeRepository,
-    private val context: Context
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NutriCoachViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return NutriCoachViewModel(repo, homeRepo, context) as T
+            return NutriCoachViewModel(repo, homeRepo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class") // TODO: is this bad practice?
     }

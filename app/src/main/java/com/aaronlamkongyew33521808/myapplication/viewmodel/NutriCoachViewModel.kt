@@ -24,7 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class NutriCoachViewModel(
     private val repo: NutriCoachRepository,
     private val homeRepo: HomeRepository,
-    private val context: Context
 ) : ViewModel() {
     private val _fruits = MutableStateFlow<List<Fruit>>(emptyList())
     val fruits: StateFlow<List<Fruit>> = _fruits

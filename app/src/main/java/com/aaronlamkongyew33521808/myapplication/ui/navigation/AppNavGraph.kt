@@ -23,6 +23,7 @@ import com.aaronlamkongyew33521808.myapplication.ui.nutricoach.NutriCoachScreen
 import com.aaronlamkongyew33521808.myapplication.ui.register.RegisterScreen
 import com.aaronlamkongyew33521808.myapplication.ui.settings.SettingsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.welcome.WelcomeScreen
+import com.aaronlamkongyew33521808.myapplication.viewmodel.ClinicianViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModel
@@ -151,7 +152,7 @@ fun AppNavGraph() {
             val userId = back.arguments!!.getString("userId")!!
             val context = LocalContext.current
 
-            // TODO: is building your repo here bad:
+            // TODO: is building your api here bad, and should it be in a singleton class, called by the viewmodel?
             val db = AppDatabase.getDatabase(context)
             val dao = db.nutriCoachDao()
             val api = Retrofit.Builder()
@@ -165,7 +166,10 @@ fun AppNavGraph() {
             )
 
             val vm: NutriCoachViewModel = viewModel(
-                factory = NutriCoachViewModelFactory(repo, homeRepo, context)
+                factory = NutriCoachViewModelFactory(
+                    repo,
+                    homeRepo,
+                )
             )
 
             NutriCoachScreen(

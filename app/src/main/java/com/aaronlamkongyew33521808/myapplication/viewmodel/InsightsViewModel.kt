@@ -3,6 +3,7 @@ package com.aaronlamkongyew33521808.myapplication.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.repository.InsightsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,8 +13,7 @@ import kotlinx.coroutines.launch
 
 class InsightsViewModel(application: Application) : AndroidViewModel(application) {
     private val repo = InsightsRepository(
-        com.aaronlamkongyew33521808.myapplication.data.AppDatabase
-            .getDatabase(application)
+        AppDatabase.getDatabase(application)
     )
 
     private val _totalScore = MutableStateFlow(0.0)
