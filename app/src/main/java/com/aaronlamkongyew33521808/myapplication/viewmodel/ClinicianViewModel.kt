@@ -27,10 +27,10 @@ class ClinicianViewModel(private val dao: UserDao) : ViewModel() {
     fun loadAverages() = viewModelScope.launch(Dispatchers.IO) {
         val users = dao.getAllUsers()
         _avgMale.value = users.filter { it.sex == "Male" }
-            .map { it.HEIFAtotalscoreMale }
+            .map { it.HEIFAtotalscore }
             .average()
         _avgFemale.value = users.filter { it.sex == "Female" }
-            .map { it.HEIFAtotalscoreFemale }
+            .map { it.HEIFAtotalscore }
             .average()
     }
 
@@ -41,7 +41,7 @@ class ClinicianViewModel(private val dao: UserDao) : ViewModel() {
             val prompt = buildString {
                 append("I have a dataset of HEIFA scores. ")
                 append("Average male: ${_avgMale.value}, female: ${_avgFemale.value}. ")
-                append("Identify three interesting patterns in plain sentences.")
+                append("Identify three interesting patterns in plain sentences.") // TODO: add more context
             }
 
             // call your GenerativeModel (e.g. Gemini client)

@@ -30,57 +30,43 @@ class NutriTrackApp : Application() {
 
 fun loadCSV(context: Context): List<UserData> {
     val userList = mutableListOf<UserData>()
-
     try {
         val inputStream = context.assets.open("participantData.csv")
         val reader = BufferedReader(InputStreamReader(inputStream))
+        val allLines = reader.readLines()
+        if (allLines.isNotEmpty()) {
+            val header = allLines.first().split(",")
+            val colIdx = header.mapIndexed { idx, name -> name.trim() to idx }.toMap()
+            allLines.drop(1).forEach { line ->
+                val tokens = line.split(",")
+                val sex = tokens[colIdx["Sex"] ?: error("Sex column missing")].trim()
+                val isMale = sex == "Male"
 
-        reader.useLines { lines ->
-            val allLines = lines.toList()
-            if (allLines.isNotEmpty()) {
-                allLines.drop(1).forEach { line ->
-                    val tokens = line.split(",")
-                    userList.add(
-                        // TODO: use if elses to categorize by gender
-                        UserData(
-                            phoneNumber = tokens[0].trim().removePrefix("\""),
-                            userId = tokens[1].trim(),
-                            sex = tokens[2].trim(),
-                            HEIFAtotalscoreMale = tokens[3].toDoubleOrNull() ?: 0.0,
-                            HEIFAtotalscoreFemale = tokens[4].toDoubleOrNull() ?: 0.0,
-                            discretionaryHEIFAscoreMale = tokens[5].toDoubleOrNull() ?: 0.0,
-                            discretionaryHEIFAscoreFemale = tokens[6].toDoubleOrNull() ?: 0.0,
-                            vegetablesHEIFAscoreMale = tokens[8].toDoubleOrNull() ?: 0.0,
-                            vegetablesHEIFAscoreFemale = tokens[9].toDoubleOrNull() ?: 0.0,
-                            fruitHEIFAscoreMale = tokens[19].toDoubleOrNull() ?: 0.0,
-                            fruitHEIFAscoreFemale = tokens[20].toDoubleOrNull() ?: 0.0,
+                fun get(col: String) = tokens[colIdx[col] ?: error("$col column missing")].toDoubleOrNull() ?: 0.0
 
-                            fruitServeSize = tokens[21].toDoubleOrNull() ?: 0.0,
-                            fruitVariationScore = tokens[22].toDoubleOrNull() ?: 0.0,
-
-                            grainsAndCerealsHEIFAscoreMale = tokens[29].toDoubleOrNull() ?: 0.0,
-                            grainsAndCerealsHEIFAscoreFemale = tokens[30].toDoubleOrNull() ?: 0.0,
-                            wholegrainsHEIFAscoreMale = tokens[33].toDoubleOrNull() ?: 0.0,
-                            wholegrainsHEIFAscoreFemale = tokens[34].toDoubleOrNull() ?: 0.0,
-                            meatAndAlternativesHEIFAscoreMale = tokens[36].toDoubleOrNull() ?: 0.0,
-                            meatAndAlternativesHEIFAscoreFemale = tokens[37].toDoubleOrNull() ?: 0.0,
-                            dairyAndAlternativesHEIFAscoreMale = tokens[40].toDoubleOrNull() ?: 0.0,
-                            dairyAndAlternativesHEIFAscoreFemale = tokens[41].toDoubleOrNull() ?: 0.0,
-                            sodiumHEIFAscoreMale = tokens[43].toDoubleOrNull() ?: 0.0,
-                            sodiumHEIFAscoreFemale = tokens[44].toDoubleOrNull() ?: 0.0,
-                            alcoholHEIFAscoreMale = tokens[46].toDoubleOrNull() ?: 0.0,
-                            alcoholHEIFAscoreFemale = tokens[47].toDoubleOrNull() ?: 0.0,
-                            waterHEIFAscoreMale = tokens[49].toDoubleOrNull() ?: 0.0,
-                            waterHEIFAscoreFemale = tokens[50].toDoubleOrNull() ?: 0.0,
-                            sugarHEIFAscoreMale = tokens[54].toDoubleOrNull() ?: 0.0,
-                            sugarHEIFAscoreFemale = tokens[55].toDoubleOrNull() ?: 0.0,
-                            SaturatedFatHEIFAscoreMale = tokens[57].toDoubleOrNull() ?: 0.0,
-                            SaturatedFatHEIFAscoreFemale = tokens[58].toDoubleOrNull() ?: 0.0,
-                            unsaturatedFatHEIFAscoreMale = tokens[60].toDoubleOrNull() ?: 0.0,
-                            unsaturatedFatHEIFAscoreFemale = tokens[61].toDoubleOrNull() ?: 0.0
-                        )
+                userList.add(
+                    UserData(
+                        phoneNumber = tokens[colIdx["PhoneNumber"] ?: error("PhoneNumber column missing")].trim().removePrefix("\""),
+                        userId = tokens[colIdx["User_ID"] ?: error("User_ID column missing")].trim(),
+                        sex = sex,
+                        HEIFAtotalscore = get(if (isMale) "HEIFAtotalscoreMale" else "HEIFAtotalscoreFemale"),
+                        discretionaryHEIFAscore = get(if (isMale) "DiscretionaryHEIFAscoreMale" else "DiscretionaryHEIFAscoreFemale"),
+                        vegetablesHEIFAscore = get(if (isMale) "VegetablesHEIFAscoreMale" else "VegetablesHEIFAscoreFemale"),
+                        fruitHEIFAscore = get(if (isMale) "FruitHEIFAscoreMale" else "FruitHEIFAscoreFemale"),
+                        fruitServeSize = get("Fruitservesize"),
+                        fruitVariationScore = get("Fruitvariationsscore"),
+                        grainsAndCerealsHEIFAscore = get(if (isMale) "GrainsandcerealsHEIFAscoreMale" else "GrainsandcerealsHEIFAscoreFemale"),
+                        wholegrainsHEIFAscore = get(if (isMale) "WholegrainsHEIFAscoreMale" else "WholegrainsHEIFAscoreFemale"),
+                        meatAndAlternativesHEIFAscore = get(if (isMale) "MeatandalternativesHEIFAscoreMale" else "MeatandalternativesHEIFAscoreFemale"),
+                        dairyAndAlternativesHEIFAscore = get(if (isMale) "DairyandalternativesHEIFAscoreMale" else "DairyandalternativesHEIFAscoreFemale"),
+                        sodiumHEIFAscore = get(if (isMale) "SodiumHEIFAscoreMale" else "SodiumHEIFAscoreFemale"),
+                        alcoholHEIFAscore = get(if (isMale) "AlcoholHEIFAscoreMale" else "AlcoholHEIFAscoreFemale"),
+                        waterHEIFAscore = get(if (isMale) "WaterHEIFAscoreMale" else "WaterHEIFAscoreFemale"),
+                        sugarHEIFAscore = get(if (isMale) "SugarHEIFAscoreMale" else "SugarHEIFAscoreFemale"),
+                        SaturatedFatHEIFAscore = get(if (isMale) "SaturatedFatHEIFAscoreMale" else "SaturatedFatHEIFAscoreFemale"),
+                        unsaturatedFatHEIFAscore = get(if (isMale) "UnsaturatedFatHEIFAscoreMale" else "UnsaturatedFatHEIFAscoreFemale")
                     )
-                }
+                )
             }
         }
     } catch (e: Exception) {
@@ -92,37 +78,24 @@ fun loadCSV(context: Context): List<UserData> {
 data class UserData(
     val phoneNumber: String,
     val userId: String,
-    val sex : String,
-    val HEIFAtotalscoreMale: Double,
-    val HEIFAtotalscoreFemale: Double,
-    val discretionaryHEIFAscoreMale: Double,
-    val discretionaryHEIFAscoreFemale: Double,
-    val vegetablesHEIFAscoreMale: Double,
-    val vegetablesHEIFAscoreFemale: Double,
-    val fruitHEIFAscoreMale: Double,
-    val fruitHEIFAscoreFemale: Double,
+    val sex: String,
+
+    val HEIFAtotalscore: Double,
+
+    val discretionaryHEIFAscore: Double,
+    val vegetablesHEIFAscore: Double,
+    val fruitHEIFAscore: Double,
+    val grainsAndCerealsHEIFAscore: Double,
+    val wholegrainsHEIFAscore: Double,
+    val meatAndAlternativesHEIFAscore: Double,
+    val dairyAndAlternativesHEIFAscore: Double,
+    val sodiumHEIFAscore: Double,
+    val alcoholHEIFAscore: Double,
+    val waterHEIFAscore: Double,
+    val sugarHEIFAscore: Double,
+    val SaturatedFatHEIFAscore: Double,
+    val unsaturatedFatHEIFAscore: Double,
 
     val fruitServeSize: Double,
     val fruitVariationScore: Double,
-
-    val grainsAndCerealsHEIFAscoreMale: Double,
-    val grainsAndCerealsHEIFAscoreFemale: Double,
-    val wholegrainsHEIFAscoreMale: Double,
-    val wholegrainsHEIFAscoreFemale: Double,
-    val meatAndAlternativesHEIFAscoreMale: Double,
-    val meatAndAlternativesHEIFAscoreFemale: Double,
-    val dairyAndAlternativesHEIFAscoreMale: Double,
-    val dairyAndAlternativesHEIFAscoreFemale: Double,
-    val sodiumHEIFAscoreMale: Double,
-    val sodiumHEIFAscoreFemale: Double,
-    val alcoholHEIFAscoreMale: Double,
-    val alcoholHEIFAscoreFemale: Double,
-    val waterHEIFAscoreMale: Double,
-    val waterHEIFAscoreFemale: Double,
-    val sugarHEIFAscoreMale: Double,
-    val sugarHEIFAscoreFemale: Double,
-    val SaturatedFatHEIFAscoreMale: Double,
-    val SaturatedFatHEIFAscoreFemale: Double,
-    val unsaturatedFatHEIFAscoreMale: Double,
-    val unsaturatedFatHEIFAscoreFemale: Double,
 )

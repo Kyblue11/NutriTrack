@@ -31,10 +31,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val user = repo.getUserById(userId)
         _userId.value = user?.userId ?: "Guest"
         _userName.value = user?.name ?: "Guest"
-        _foodQualityScore.value = if (user?.sex == "Male") {
-            user.HEIFAtotalscoreMale
-        } else {
-            user?.HEIFAtotalscoreFemale ?: 0.0
-        }
+        _foodQualityScore.value =
+            user?.HEIFAtotalscore ?: 0.0 // TODO: test this placeholder (maybe replace with average of both scores)
+
     }
 }

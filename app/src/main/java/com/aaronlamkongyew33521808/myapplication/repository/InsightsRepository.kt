@@ -6,26 +6,25 @@ import com.aaronlamkongyew33521808.myapplication.data.entity.UserEntity
 class InsightsRepository(private val db: AppDatabase) {
     suspend fun getTotalScore(userId: String): Double {
         val user = db.userDao().getUserById(userId) ?: return 0.0
-        return if (user.sex == "Male") user.HEIFAtotalscoreMale else user.HEIFAtotalscoreFemale
+        return user.HEIFAtotalscore
     }
 
     suspend fun getSubScores(userId: String): Map<String, Double> {
         val user = db.userDao().getUserById(userId) ?: return emptyMap()
-        val male = user.sex == "Male"
         return mapOf(
-            "Vegetables" to if (male) user.vegetablesHEIFAscoreMale else user.vegetablesHEIFAscoreFemale,
-            "Fruits" to if (male) user.fruitHEIFAscoreMale else user.fruitHEIFAscoreFemale,
-            "Grains & Cereals" to if (male) user.grainsAndCerealsHEIFAscoreMale else user.grainsAndCerealsHEIFAscoreFemale,
-            "Whole Grains" to if (male) user.wholegrainsHEIFAscoreMale else user.wholegrainsHEIFAscoreFemale,
-            "Meat & Alternatives" to if (male) user.meatAndAlternativesHEIFAscoreMale else user.meatAndAlternativesHEIFAscoreFemale,
-            "Dairy" to if (male) user.dairyAndAlternativesHEIFAscoreMale else user.dairyAndAlternativesHEIFAscoreFemale,
-            "Water" to if (male) user.waterHEIFAscoreMale else user.waterHEIFAscoreFemale,
-            "Saturated Fats" to if (male) user.SaturatedFatHEIFAscoreMale else user.SaturatedFatHEIFAscoreFemale,
-            "Unsaturated Fats" to if (male) user.unsaturatedFatHEIFAscoreMale else user.unsaturatedFatHEIFAscoreFemale,
-            "Sodium" to if (male) user.sodiumHEIFAscoreMale else user.sodiumHEIFAscoreFemale,
-            "Sugar" to if (male) user.sugarHEIFAscoreMale else user.sugarHEIFAscoreFemale,
-            "Alcohol" to if (male) user.alcoholHEIFAscoreMale else user.alcoholHEIFAscoreFemale,
-            "Discretionary Foods" to if (male) user.discretionaryHEIFAscoreMale else user.discretionaryHEIFAscoreFemale
+            "Vegetables" to user.vegetablesHEIFAscore,
+            "Fruits" to user.fruitHEIFAscore,
+            "Grains & Cereals" to user.grainsAndCerealsHEIFAscore,
+            "Whole Grains" to user.wholegrainsHEIFAscore,
+            "Meat & Alternatives" to user.meatAndAlternativesHEIFAscore,
+            "Dairy" to user.dairyAndAlternativesHEIFAscore,
+            "Water" to user.waterHEIFAscore,
+            "Saturated Fats" to user.SaturatedFatHEIFAscore,
+            "Unsaturated Fats" to user.unsaturatedFatHEIFAscore,
+            "Sodium" to user.sodiumHEIFAscore,
+            "Sugar" to user.sugarHEIFAscore,
+            "Alcohol" to user.alcoholHEIFAscore,
+            "Discretionary Foods" to user.discretionaryHEIFAscore,
         )
     }
 }
