@@ -36,4 +36,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         return md.digest(this.toByteArray())
             .joinToString("") { "%02x".format(it) }
     }
+
+    fun resetLoginResult() {
+        _loginResult.value = null
+    }
 }

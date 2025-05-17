@@ -74,7 +74,10 @@ fun LoginScreen(
                 AuthManager.login(selectedUserId, context)
                 onLoginSuccess(selectedUserId)
             }
-            false -> Toast.makeText(context, "Invalid credentials", Toast.LENGTH_LONG).show()
+            false -> {
+                Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                viewModel.resetLoginResult()
+            }
             null -> { /* Do nothing */ }
         }
     }

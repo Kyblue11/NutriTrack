@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,7 +53,8 @@ import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModelFa
 fun NutriCoachScreen(
     userId: String,
     viewModel: NutriCoachViewModel, // TODO: need argument viewModel(factory = ...) ? Check with NutriCoachViewModel
-    navController: NavHostController
+    navController: NavHostController,
+    onReturnHome: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
@@ -81,6 +86,16 @@ fun NutriCoachScreen(
                         fontWeight = FontWeight.Bold,
                         fontSize = (screenWidth * 0.05).sp
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onReturnHome()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
                 },
 //                modifier = Modifier.height((screenHeight * 0.1).dp),
             )

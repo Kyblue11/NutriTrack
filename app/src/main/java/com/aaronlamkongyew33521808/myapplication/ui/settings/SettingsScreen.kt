@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBar
 import com.aaronlamkongyew33521808.myapplication.ui.navigation.BottomBar
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
@@ -63,7 +64,8 @@ fun SettingsScreen(
     viewModel: SettingsViewModel,
     onLogout: () -> Unit,
     onClinician: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    onReturnHome: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
@@ -92,6 +94,16 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         fontSize = (screenWidth * 0.05).sp
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onReturnHome()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
                 },
 //                modifier = Modifier.height((screenHeight * 0.1).dp)
             )

@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
+import com.aaronlamkongyew33521808.myapplication.data.api.buildAPI
 import com.aaronlamkongyew33521808.myapplication.repository.HomeRepository
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
 import com.aaronlamkongyew33521808.myapplication.repository.QuestionnaireRepository
@@ -43,7 +44,6 @@ object Routes {
     const val Insights = "insights/{userId}"
     const val NutriCoach = "coach/{userId}"
     const val Settings = "settings/{userId}"
-//    const val ClinicianLogin     = "clinician_login"
     const val ClinicianDashboard = "clinician_dashboard"
 }
 
@@ -64,7 +64,6 @@ fun AppNavGraph() {
         composable(Routes.Welcome) {
             WelcomeScreen {
                 navController.navigate(Routes.Login) {
-//                    popUpTo(Routes.Welcome) { inclusive = true }
                 }
             }
         }
@@ -75,13 +74,11 @@ fun AppNavGraph() {
                 viewModel = vm,
                 onLoginSuccess = { id ->
                     navController.navigate("dashboard/$id")
-//                    {
-//                        popUpTo(Routes.Login) { inclusive = true } // TODO: should i remove this?
-//                    }
                 },
                 onRegister = { navController.navigate(Routes.Register) }
             )
         }
+
         composable(Routes.Register) {
             val vm: RegisterViewModel = viewModel()
             RegisterScreen(
@@ -93,6 +90,7 @@ fun AppNavGraph() {
                 }
             )
         }
+
         composable(
             route = Routes.Dashboard,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
@@ -103,6 +101,7 @@ fun AppNavGraph() {
                 navController = navController
             )
         }
+
         composable(
             route = Routes.Home,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
@@ -122,6 +121,7 @@ fun AppNavGraph() {
                 navController = navController
             )
         }
+
         composable(
             route = Routes.Insights,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
@@ -140,9 +140,18 @@ fun AppNavGraph() {
                     }
 
                 },
+                onImproveClick = {
+                    navController.navigate("coach/$userId")
+                    {
+                        popUpTo(Routes.Insights) {
+                            inclusive = true
+                        }
+                    }
+                },
                 navController = navController
             )
         }
+
         composable(
             Routes.NutriCoach, arguments = listOf(
                 navArgument("userId")
@@ -153,15 +162,9 @@ fun AppNavGraph() {
             val userId = back.arguments!!.getString("userId")!!
             val context = LocalContext.current
 
-            // TODO: is building your api here bad, and should it be in a singleton class, called by the viewmodel?
             val db = AppDatabase.getDatabase(context)
             val dao = db.nutriCoachDao()
-            val api = Retrofit.Builder()
-                .baseUrl("https://www.fruityvice.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(FruityViceApi::class.java)
-            val repo = NutriCoachRepository(api, dao)
+            val repo = NutriCoachRepository(buildAPI.fruityApi, dao)
             val homeRepo = HomeRepository(
                 db.userDao()
             )
@@ -176,13 +179,20 @@ fun AppNavGraph() {
                     quesRepo
                 )
             )
-
             NutriCoachScreen(
                 userId,
                 viewModel = vm,
-                navController = navController
+                navController = navController,
+                onReturnHome = {
+                    navController.navigate("home/$userId") {
+                        popUpTo(Routes.NutriCoach) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
+
         composable(
             route = Routes.Settings,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
@@ -204,7 +214,14 @@ fun AppNavGraph() {
                 onClinician = {
                     navController.navigate(Routes.ClinicianDashboard)
                 },
-                navController = navController
+                navController = navController,
+                onReturnHome = {
+                    navController.navigate("home/$userId") {
+                        popUpTo(Routes.Settings) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 

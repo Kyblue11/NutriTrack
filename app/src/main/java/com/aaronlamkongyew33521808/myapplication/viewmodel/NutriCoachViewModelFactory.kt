@@ -17,6 +17,6 @@ class NutriCoachViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return NutriCoachViewModel(repo, homeRepo, quesRepo) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class") // TODO: is this bad practice?
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

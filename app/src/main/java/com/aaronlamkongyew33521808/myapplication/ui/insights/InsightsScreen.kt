@@ -54,7 +54,8 @@ fun InsightsScreen(
     userId: String,
     vm: InsightsViewModel = viewModel(),
     navController: NavHostController,
-    onReturnHome : () -> Unit
+    onReturnHome : () -> Unit,
+    onImproveClick: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
@@ -106,7 +107,9 @@ fun InsightsScreen(
                         context.startActivity(
                             Intent.createChooser(shareIntent, "Share via")
                         )                    },
-                    onImproveClick = { /* TODO: navigate to NutriCoach later */ }
+                    onImproveClick = {
+                        onImproveClick()
+                    }
                 )
             }
         }

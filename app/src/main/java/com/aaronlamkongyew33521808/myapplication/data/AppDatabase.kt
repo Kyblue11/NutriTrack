@@ -30,7 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "nutritrack_db"
                 )
-                    .fallbackToDestructiveMigration()   //  allow schema reset on version change TODO: is this bad?
+                    .fallbackToDestructiveMigration()   //  allow schema reset on version change
                     .build()
                     .also { INSTANCE = it }
             }
