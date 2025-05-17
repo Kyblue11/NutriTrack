@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -35,11 +36,11 @@ fun RegisterScreen(
     val canClaim by viewModel.canClaim.collectAsStateWithLifecycle()
     val result by viewModel.claimResult.collectAsStateWithLifecycle()
 
-    var userId by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var pass by remember { mutableStateOf("") }
-    var confirm by remember { mutableStateOf("") }
+    var userId by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var pass by rememberSaveable { mutableStateOf("") }
+    var confirm by rememberSaveable { mutableStateOf("") }
 
     // track whether they've attempted verify
     var triedVerify by remember { mutableStateOf(false) }
@@ -102,7 +103,7 @@ fun RegisterScreen(
 
                 OutlinedTextField(
                     value = phone,
-                    onValueChange = { phone = it; viewModel.resetCanClaim() }, // TODO: bad practice, but this makes it work!!! Function is called for every input?!
+                    onValueChange = { phone = it; viewModel.resetCanClaim() }, // Band-aid fix to ensure to reset register attempt, but will be incurred for every key-stroke
                     singleLine = true,
                     label = { Text("Phone Number", fontSize = (screenWidth * 0.04).sp) },
                     placeholder = { Text("Enter your registered number", fontSize = (screenWidth * 0.035).sp) },
@@ -136,7 +137,8 @@ fun RegisterScreen(
                     onValueChange = { name = it },
                     label = { Text("Enter your user name", fontSize = (screenWidth * 0.04).sp) },
                     placeholder = { Text("e.g. John Doe", fontSize = (screenWidth * 0.035).sp) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
                 OutlinedTextField(
                     value = pass,
@@ -144,14 +146,18 @@ fun RegisterScreen(
                     label = { Text("Password", fontSize = (screenWidth * 0.04).sp) },
                     placeholder = { Text("Enter a new password", fontSize = (screenWidth * 0.035).sp) },
                     visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                 )
                 OutlinedTextField(
                     value = confirm,
                     onValueChange = { confirm = it },
                     label = { Text("Confirm Password", fontSize = (screenWidth * 0.04).sp) },
                     visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 )
 
                 Text(

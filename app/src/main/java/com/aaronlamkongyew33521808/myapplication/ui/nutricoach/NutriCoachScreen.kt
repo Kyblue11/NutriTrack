@@ -31,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -52,7 +53,7 @@ import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModelFa
 @Composable
 fun NutriCoachScreen(
     userId: String,
-    viewModel: NutriCoachViewModel, // TODO: need argument viewModel(factory = ...) ? Check with NutriCoachViewModel
+    viewModel: NutriCoachViewModel,
     navController: NavHostController,
     onReturnHome: () -> Unit
 ) {
@@ -63,10 +64,10 @@ fun NutriCoachScreen(
     val fruits by viewModel.fruits.collectAsState()
     val genTip by viewModel.genTip.collectAsState()
     val tips by viewModel.tips.collectAsState()
-    var fruitQuery by remember { mutableStateOf("") }
-    var showTipsDialog by remember { mutableStateOf(false) }
+    var fruitQuery by rememberSaveable { mutableStateOf("") }
+    var showTipsDialog by rememberSaveable { mutableStateOf(false) }
 
-    var filtered by remember { mutableStateOf<List<Fruit>>(emptyList()) }
+    var filtered by rememberSaveable { mutableStateOf<List<Fruit>>(emptyList()) }
 
     val isOptimal by viewModel.isFruitOptimal.collectAsState()
     val randomImageUrl by viewModel.randomImageUrl.collectAsState()

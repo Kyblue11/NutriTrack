@@ -20,6 +20,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val _loginResult = MutableStateFlow<Boolean?>(null)
     val loginResult: StateFlow<Boolean?> get() = _loginResult
 
+    // pre-loads all the user IDs automatically when this ViewModel is created for the UI composable
     init {
         viewModelScope.launch {
             // only users who have both name & passwordHash non-null
@@ -35,7 +36,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun String.sha256(): String {
-        val md = MessageDigest.getInstance("SHA-256") // TODO: check what MessageDigest is
+        val md = MessageDigest.getInstance("SHA-256") // TODO: check whether can import this
         return md.digest(this.toByteArray())
             .joinToString("") { "%02x".format(it) }
     }

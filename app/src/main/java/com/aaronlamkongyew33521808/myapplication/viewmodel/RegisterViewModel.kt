@@ -51,7 +51,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun String.sha256(): String {
-        val md = MessageDigest.getInstance("SHA-256") // TODO: check what SHA and MessageDigest is
+        val md = MessageDigest.getInstance("SHA-256")
         return md.digest(this.toByteArray())
             .joinToString("") { "%02x".format(it) }
     }

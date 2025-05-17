@@ -45,6 +45,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -74,16 +75,16 @@ fun SettingsScreen(
     val name by viewModel.name.collectAsState()
     val phone by viewModel.phone.collectAsState()
     val userId by viewModel.id.collectAsState()
-    var editMode by remember { mutableStateOf(false) }
-    var newName by remember { mutableStateOf(name) }
-    var newPhone by remember { mutableStateOf(phone) }
-    var currentPass by remember { mutableStateOf("") }
-    var newPass by remember { mutableStateOf("") }
-    var confirmPass by remember { mutableStateOf("") }
+    var editMode by rememberSaveable { mutableStateOf(false) }
+    var newName by rememberSaveable { mutableStateOf(name) }
+    var newPhone by rememberSaveable { mutableStateOf(phone) }
+    var currentPass by rememberSaveable { mutableStateOf("") }
+    var newPass by rememberSaveable { mutableStateOf("") }
+    var confirmPass by rememberSaveable { mutableStateOf("") }
     var showClinicianDialog by remember { mutableStateOf(false) }
-    var passphrase by remember { mutableStateOf("") }
+    var passphrase by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope() // coroutine specially made for UIs (composables)
 
     Scaffold(
         topBar = {
@@ -209,12 +210,17 @@ fun SettingsScreen(
                         OutlinedTextField(
                             value = newName,
                             onValueChange = { newName = it },
-                            label = { Text("Name", fontSize = (screenWidth * 0.04).sp) }
+                            label = { Text("Name", fontSize = (screenWidth * 0.04).sp) },
+                            singleLine = true
                         )
                         OutlinedTextField(
                             value = newPhone,
                             onValueChange = { newPhone = it },
-                            label = { Text("Phone", fontSize = (screenWidth * 0.04).sp) }
+                            label = { Text("Phone", fontSize = (screenWidth * 0.04).sp) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Phone
+                            )
                         )
                         Spacer(Modifier.height((screenHeight * 0.005).dp))
                         Divider(
@@ -226,19 +232,31 @@ fun SettingsScreen(
                             value = currentPass,
                             onValueChange = { currentPass = it },
                             label = { Text("Current Password", fontSize = (screenWidth * 0.04).sp) },
-                            visualTransformation = PasswordVisualTransformation()
+                            visualTransformation = PasswordVisualTransformation(),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password
+                            )
                         )
                         OutlinedTextField(
                             value = newPass,
                             onValueChange = { newPass = it },
                             label = { Text("New Password", fontSize = (screenWidth * 0.04).sp) },
-                            visualTransformation = PasswordVisualTransformation()
+                            visualTransformation = PasswordVisualTransformation(),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password
+                            )
                         )
                         OutlinedTextField(
                             value = confirmPass,
                             onValueChange = { confirmPass = it },
                             label = { Text("Confirm Password", fontSize = (screenWidth * 0.04).sp) },
-                            visualTransformation = PasswordVisualTransformation()
+                            visualTransformation = PasswordVisualTransformation(),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password
+                            )
                         )
                         Spacer(Modifier.height((screenHeight * 0.005).dp))
                         Text(
@@ -283,7 +301,8 @@ fun SettingsScreen(
                                 placeholder = { Text("Enter your clinician key", fontSize = (screenWidth * 0.035).sp) },
                                 value = passphrase,
                                 onValueChange = { passphrase = it },
-                                visualTransformation = PasswordVisualTransformation()
+                                visualTransformation = PasswordVisualTransformation(),
+                                singleLine = true,
                             )
                         }
                     },

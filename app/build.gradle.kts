@@ -23,7 +23,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField ("String", "apiKey", "\"AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE\"") // TODO: under buildTypes or Android:defaultConfig
+            buildConfigField ("String", "apiKey", "\"AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE\"")
         }
         release {
             buildConfigField ("String", "apiKey", "\"AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE\"")
@@ -43,7 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true // TODO: check if this is bad
+        buildConfig = true
     }
 }
 
@@ -68,7 +68,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.google.code.gson:gson:2.10.1")
-//    implementation("com.google.ai.client:generativeai:0.3.0") // TODO: ask dr Tan abt this
+//    implementation("com.google.ai.client:generativeai:0.3.0") // TODO: try this and comment the below one
     implementation("dev.shreyaspatil.generativeai:generativeai-google:0.9.0-1.1.0")
 
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")

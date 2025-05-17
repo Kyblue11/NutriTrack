@@ -29,7 +29,6 @@ data class UserEntity(
     val SaturatedFatHEIFAscore: Double,
     val unsaturatedFatHEIFAscore: Double,
 
-    // TODO: check this
     @ColumnInfo val name: String?,
     @ColumnInfo val passwordHash: String?,
 

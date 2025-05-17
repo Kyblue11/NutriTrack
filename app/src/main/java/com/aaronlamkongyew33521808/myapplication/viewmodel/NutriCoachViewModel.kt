@@ -46,12 +46,12 @@ class NutriCoachViewModel(
         return "https://picsum.photos/400?random=${System.currentTimeMillis()}"
     }
 
-    suspend fun fetchFruits() { // TODO: is this bad practice?
+    suspend fun fetchFruits() {
         try {
             _fruits.value = repo.fetchFruits()
         } catch (e: Exception) {
             _fruits.value = emptyList() // Handle error gracefully
-            e.printStackTrace() // Log the error for debugging
+            e.printStackTrace()
         }
     }
 
@@ -108,57 +108,3 @@ fun generateTip(userId: String) {
     }
 
 }
-
-//class NutriCoachViewModel(application: Application)
-//    : AndroidViewModel(application) {
-//
-//    // get your DAOs / Retrofit from a singleton or AppDatabase
-//    private val db   = AppDatabase.getDatabase(application)
-//    private val dao  = db.nutriCoachDao()
-//    private val api  = Retrofit.Builder()
-//        .baseUrl("https://fruityvice.com/")
-//        .addConverterFactory(GsonConverterFactory.create())
-//        .build()
-//        .create(FruityViceApi::class.java)
-//
-//
-//
-//    private val repo = NutriCoachRepository(api, dao)
-//    private val _fruits = MutableStateFlow<List<Fruit>>(emptyList())
-//    val fruits: StateFlow<List<Fruit>> = _fruits
-//
-//    private val _tips = MutableStateFlow<List<NutriCoachTip>>(emptyList())
-//    val tips: StateFlow<List<NutriCoachTip>> = _tips
-//
-//    private val _genTip = MutableStateFlow<String?>(null)
-//    val genTip: StateFlow<String?> = _genTip
-//
-//    suspend fun fetchFruits() {
-//        _fruits.value = repo.fetchFruits()
-//    }
-//
-//    fun generateTip(userId: String, prompt: String) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                val model = GenerativeModel(
-//                    modelName = "gemini-1.5-flash",
-//                    apiKey = "AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE"
-//                )
-//                val response = model.generateContent(prompt)
-//                val tip = response.text ?: return@launch
-//                val tipEntity = NutriCoachTip(userId = userId, tip = tip)
-//                repo.saveTip(tipEntity)
-//                _genTip.value = tip
-//                _tips.value = repo.getTips(userId)
-//            } catch (e: Exception) {
-//                _genTip.value = "Error: ${e.localizedMessage}"
-//            }
-//        }
-//    }
-//
-//    fun loadTipHistory(userId: String) {
-//        viewModelScope.launch {
-//            _tips.value = repo.getTips(userId)
-//        }
-//    }
-//}

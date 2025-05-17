@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,10 +65,10 @@ fun LoginScreen(
     val result by viewModel.loginResult.collectAsStateWithLifecycle()
 
     var expanded by remember { mutableStateOf(false) }
-    var selectedUserId by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(result) {
+    var selectedUserId by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(result) { // from viewModel init's viewModelScope.launch (it.userId)
         when (result) {
             true -> {
                 Toast.makeText(context, "Login successful", Toast.LENGTH_LONG).show()

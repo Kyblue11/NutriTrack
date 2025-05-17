@@ -6,11 +6,10 @@ package com.aaronlamkongyew33521808.myapplication.auth
     import androidx.compose.runtime.mutableStateOf
 
     object AuthManager {
-        // Compose-friendly mutable state so that any @Composable observing this will recompose
-        public val _userId = mutableStateOf<String?>(null) // TODO: Make this private, but conflict with MainActivity?
+        val _userId = mutableStateOf<String?>(null)
         val userId: State<String?> = _userId
 
-        // Call this on a successful login
+        // on a successful login
         fun login(userId: String, context: Context) {
             _userId.value = userId
             // also persist to SharedPreferences so we survive process death:
@@ -21,7 +20,6 @@ package com.aaronlamkongyew33521808.myapplication.auth
                 .apply()
         }
 
-        // Call this on logout
         fun logout(context: Context) {
             _userId.value = null
             context.getSharedPreferences("NutriTrackPrefs", MODE_PRIVATE)
@@ -31,5 +29,4 @@ package com.aaronlamkongyew33521808.myapplication.auth
                 .apply()
         }
 
-        fun getStudentId(): String? = _userId.value
     }

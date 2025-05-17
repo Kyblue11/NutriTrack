@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 //In this case, using AndroidViewModel(application: Application) is appropriate and simple because:
 //The only dependency needed is the Application context, which is used to get the database singleton.
 //No other dependency injections (like repositories or DAOs) are injected from outside.
-//You do not need to pass custom parameters to the ViewModel.
-//Factory pattern is better if you want to inject dependencies (e.g., repositories, DAOs, or other objects) for better testability and separation of concerns.
+//I do not need to pass custom parameters to the ViewModel!
+//Factory pattern is better if inject dependencies (e.g., repositories, DAOs, or other objects) for better testability and separation of concerns.
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val repo = HomeRepository(AppDatabase.getDatabase(application).userDao())
@@ -32,7 +32,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         _userId.value = user?.userId ?: "Guest"
         _userName.value = user?.name ?: "Guest"
         _foodQualityScore.value =
-            user?.HEIFAtotalscore ?: 0.0 // TODO: test this placeholder (maybe replace with average of both scores)
+            user?.HEIFAtotalscore ?: 5.47 // placeholder (avg)
 
     }
 }
