@@ -2,6 +2,8 @@ package com.aaronlamkongyew33521808.myapplication.ui.welcome
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -9,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,22 +22,27 @@ import com.aaronlamkongyew33521808.myapplication.R
 
 @Composable
 fun WelcomeScreen(onLetsGo: () -> Unit) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+        .verticalScroll(rememberScrollState()),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding((screenWidth * 0.04).dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.1).dp))
 
             Text(
                 text = "NutriTrack",
                 style = TextStyle(
-                    fontSize = 32.sp,
+                    fontSize = (screenWidth * 0.08).sp,
                     fontWeight = FontWeight.Bold
                 ),
             )
@@ -42,10 +50,10 @@ fun WelcomeScreen(onLetsGo: () -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.egg_logo),
                 contentDescription = "NutriTrack Logo",
-                modifier = Modifier.size(300.dp)
+                modifier = Modifier.size((screenWidth * 0.75).dp)
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.04).dp))
 
             Text(
                 text =
@@ -56,24 +64,27 @@ fun WelcomeScreen(onLetsGo: () -> Unit) {
                                 https://www.monash.edu/medicine/scs/nutrition/clinics/nutrition
                                 """.trimIndent(),
                 textAlign = TextAlign.Justify,
-                style = TextStyle(fontSize = 16.sp),
+                style = TextStyle(fontSize = (screenWidth * 0.04).sp),
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.04).dp))
 
             Button(
                 onClick = onLetsGo,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Let's Go!")
+                Text(
+                    "Let's Go!",
+                    fontSize = (screenWidth * 0.045).sp
+                )
             }
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = "Designed with ❤️ by Aaron Lam Kong Yew (33521808)",
-                style = TextStyle(fontSize = 12.sp),
+                style = TextStyle(fontSize = (screenWidth * 0.03).sp),
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
         }
     }
 }

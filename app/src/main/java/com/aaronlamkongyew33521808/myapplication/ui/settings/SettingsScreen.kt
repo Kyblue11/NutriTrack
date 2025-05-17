@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -64,6 +65,10 @@ fun SettingsScreen(
     onClinician: () -> Unit,
     navController: NavHostController
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+
     val name by viewModel.name.collectAsState()
     val phone by viewModel.phone.collectAsState()
     val userId by viewModel.id.collectAsState()
@@ -85,13 +90,14 @@ fun SettingsScreen(
                     Text(
                         text = "Settings",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = (screenWidth * 0.05).sp
                     )
                 },
+//                modifier = Modifier.height((screenHeight * 0.1).dp)
             )
         },
         bottomBar = {
-            BottomBar(navController, userId)
+            BottomBar(navController, userId, screenWidth, screenHeight)
         }
     ) { innerPadding ->
         Column(
@@ -99,15 +105,15 @@ fun SettingsScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding((screenWidth * 0.04).dp),
+            verticalArrangement = Arrangement.spacedBy((screenHeight * 0.03).dp)
         ) {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("ACCOUNT", style = MaterialTheme.typography.labelLarge)
+                Text("ACCOUNT", style = MaterialTheme.typography.labelLarge, fontSize = (screenWidth * 0.045).sp)
                 IconButton(onClick = {
                     if (!editMode) {
                         newName = name
@@ -170,59 +176,68 @@ fun SettingsScreen(
             Card(
                 Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    .padding(vertical = (screenHeight * 0.01).dp),
+                shape = RoundedCornerShape((screenWidth * 0.02).dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = (screenHeight * 0.002).dp)
             ) {
                 if (!editMode) {
-                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(name, style = MaterialTheme.typography.titleMedium)
-                        Text(phone, style = MaterialTheme.typography.bodyMedium)
-                        Text("ID: $userId", style = MaterialTheme.typography.bodySmall)
+                    Column(
+                        Modifier.padding((screenWidth * 0.04).dp),
+                        verticalArrangement = Arrangement.spacedBy((screenHeight * 0.005).dp)
+                    ) {
+                        Text(name, style = MaterialTheme.typography.titleMedium, fontSize = (screenWidth * 0.045).sp)
+                        Text(phone, style = MaterialTheme.typography.bodyMedium, fontSize = (screenWidth * 0.04).sp)
+                        Text("ID: $userId", style = MaterialTheme.typography.bodySmall, fontSize = (screenWidth * 0.035).sp)
                     }
                 } else {
-                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(
+                        Modifier.padding((screenWidth * 0.04).dp),
+                        verticalArrangement = Arrangement.spacedBy((screenHeight * 0.01).dp)
+                    ) {
                         OutlinedTextField(
                             value = newName,
                             onValueChange = { newName = it },
-                            label = { Text("Name") }
+                            label = { Text("Name", fontSize = (screenWidth * 0.04).sp) }
                         )
                         OutlinedTextField(
                             value = newPhone,
                             onValueChange = { newPhone = it },
-                            label = { Text("Phone") }
+                            label = { Text("Phone", fontSize = (screenWidth * 0.04).sp) }
                         )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height((screenHeight * 0.005).dp))
                         Divider(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                            thickness = 1.dp,
+                            thickness = (screenHeight * 0.001).dp
                         )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height((screenHeight * 0.005).dp))
                         OutlinedTextField(
                             value = currentPass,
                             onValueChange = { currentPass = it },
-                            label = { Text("Current Password") },
+                            label = { Text("Current Password", fontSize = (screenWidth * 0.04).sp) },
                             visualTransformation = PasswordVisualTransformation()
                         )
                         OutlinedTextField(
                             value = newPass,
                             onValueChange = { newPass = it },
-                            label = { Text("New Password") },
+                            label = { Text("New Password", fontSize = (screenWidth * 0.04).sp) },
                             visualTransformation = PasswordVisualTransformation()
                         )
                         OutlinedTextField(
                             value = confirmPass,
                             onValueChange = { confirmPass = it },
-                            label = { Text("Confirm Password") },
+                            label = { Text("Confirm Password", fontSize = (screenWidth * 0.04).sp) },
                             visualTransformation = PasswordVisualTransformation()
                         )
-                        Spacer(Modifier.height(4.dp))
-                        Text( text =
-                            """
+                        Spacer(Modifier.height((screenHeight * 0.005).dp))
+                        Text(
+                            text = """
                                 If you do not wish to change your password, leave the 3 password fields blank.
                                 If you wish to change your password, please enter your current password and the new password twice.
                             """.trimIndent(),
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                lineHeight = (screenWidth * 0.05).sp
+                            ),
+                            fontSize = (screenWidth * 0.035).sp,
                             textAlign = TextAlign.Justify,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
@@ -230,30 +245,30 @@ fun SettingsScreen(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height((screenHeight * 0.02).dp))
             Divider(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 8.dp)
+                thickness = (screenHeight * 0.001).dp,
+                modifier = Modifier.padding(vertical = (screenHeight * 0.01).dp)
             )
-            Spacer(Modifier.height(16.dp))
-            Text("OTHER SETTINGS", style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.height((screenHeight * 0.01).dp))
+            Text("OTHER SETTINGS", style = MaterialTheme.typography.labelLarge, fontSize = (screenWidth * 0.045).sp)
 
             SettingsRow(label = "Logout", onClick = {
                 AuthManager.logout(context)
                 onLogout()
             })
-            SettingsRow(label = "Clinician Login",  onClick = { showClinicianDialog = true })
+            SettingsRow(label = "Clinician Login", onClick = { showClinicianDialog = true })
 
             if (showClinicianDialog) {
                 AlertDialog(
                     onDismissRequest = { showClinicianDialog = false },
-                    title = { Text("Clinician Login") },
+                    title = { Text("Clinician Login", fontSize = (screenWidth * 0.045).sp) },
                     text = {
                         Column {
                             OutlinedTextField(
-                                label = { Text("Clinician Key") },
-                                placeholder = { Text("Enter your clinician key") },
+                                label = { Text("Clinician Key", fontSize = (screenWidth * 0.04).sp) },
+                                placeholder = { Text("Enter your clinician key", fontSize = (screenWidth * 0.035).sp) },
                                 value = passphrase,
                                 onValueChange = { passphrase = it },
                                 visualTransformation = PasswordVisualTransformation()
@@ -273,12 +288,12 @@ fun SettingsScreen(
                             }
                             showClinicianDialog = false
                         }) {
-                            Text("OK")
+                            Text("OK", fontSize = (screenWidth * 0.04).sp)
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showClinicianDialog = false }) {
-                            Text("Cancel")
+                            Text("Cancel", fontSize = (screenWidth * 0.04).sp)
                         }
                     }
                 )
@@ -288,11 +303,15 @@ fun SettingsScreen(
 }
 @Composable
 private fun SettingsRow(label: String, onClick: () -> Unit) {
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     Row(
         Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 12.dp),
+            .padding(vertical = (screenHeight * 0.015).dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

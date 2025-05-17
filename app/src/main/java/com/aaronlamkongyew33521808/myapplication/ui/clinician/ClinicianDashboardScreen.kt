@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,6 +48,10 @@ fun ClinicianDashboardScreen(
     dao: UserDao = AppDatabase.getDatabase(LocalContext.current).userDao(),
     viewModel: ClinicianViewModel = viewModel(factory = ClinicianViewModel.Factory(dao))
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+
     val avgMale   by viewModel.avgMale.collectAsState(initial = 0.0)
     val avgFemale by viewModel.avgFemale.collectAsState(initial = 0.0)
     val insights  by viewModel.insights.collectAsState(initial = emptyList())
@@ -63,7 +70,7 @@ fun ClinicianDashboardScreen(
                 Text(
                     text = "Clinician Dashboard",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = (screenWidth * 0.05).sp
                 )
             },
         )
@@ -72,20 +79,21 @@ fun ClinicianDashboardScreen(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding((screenWidth * 0.04).dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy((screenHeight * 0.02).dp)
         ) {
             Text("Average HEIFA (Male): ${"%.1f".format(avgMale)}")
             Text("Average HEIFA (Female): ${"%.1f".format(avgFemale)}")
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height((screenHeight * 0.02).dp))
             Button(
                 onClick = { viewModel.findPatterns() },
                 enabled = !loading
             ) { Text(if (loading) "Thinking…" else "Find Data Patterns") }
 
             insights.forEach { pattern ->
-                Card(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                    Text(pattern, Modifier.padding(8.dp))
+                Card(Modifier.fillMaxWidth().padding(vertical = (screenHeight * 0.01).dp)) {
+                    Text(pattern, Modifier.padding((screenWidth * 0.03).dp))
                 }
             }
 

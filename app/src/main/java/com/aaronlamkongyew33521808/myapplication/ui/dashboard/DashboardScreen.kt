@@ -25,6 +25,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import com.aaronlamkongyew33521808.myapplication.viewmodel.QuestionnaireViewModel
 import java.util.Calendar
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +35,10 @@ fun DashboardScreen(
     navController: NavController,
     vm: QuestionnaireViewModel = viewModel()
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+
     // load once
     LaunchedEffect(Unit) { vm.load(userId) }
     // intercept Android back (gesture or system button)
@@ -76,7 +82,7 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Food Intake Questionnaire", fontSize = 20.sp) },
+                title = { Text("Food Intake Questionnaire", fontSize = (screenWidth * 0.05).sp) },
                 navigationIcon = {
                     IconButton(onClick = {
                         // also intercept the arrow
@@ -96,13 +102,13 @@ fun DashboardScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding((screenWidth * 0.04).dp),
             verticalArrangement = Arrangement.Top
         ) {
             Text(
                 text = "Tick all the food categories you can eat",
-                style = TextStyle(fontSize = 16.sp),
-                modifier = Modifier.padding(bottom = 8.dp)
+                fontSize = (screenWidth * 0.04).sp,
+                modifier = Modifier.padding(bottom = (screenHeight * 0.01).dp)
             )
             FoodCategoriesRow1(fruits, vm::setFruits, vegetables, vm::setVegetables, grains, vm::setGrains)
             FoodCategoriesRow2(
@@ -122,20 +128,20 @@ fun DashboardScreen(
                 onNutsSeedsChange = vm::setNutsSeeds
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
-            Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp)
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
+            Divider(modifier = Modifier.fillMaxWidth(), thickness = (screenHeight * 0.001).dp)
+            Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
 
             Text(
                 text = "Your Persona",
-                style = TextStyle(fontSize = 16.sp),
+                fontSize = (screenWidth * 0.04).sp,
             )
             Text(
                 text = "People can be broadly classified into 6 different types based on their eating preferences. " +
                         "Click on each button below to find out the different types, and select the type that best fits you!",
                 style = TextStyle(fontSize = 14.sp),
                 textAlign = TextAlign.Justify,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = (screenHeight * 0.01).dp)
             )
 
             FlowRowPersonaButtons(
@@ -146,20 +152,20 @@ fun DashboardScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
-            Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp)
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
+            Divider(modifier = Modifier.fillMaxWidth(), thickness = (screenHeight * 0.001).dp)
+            Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
 
             Text(text = "Which persona best fits you?")
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.01).dp))
 
             PersonaDropdown(personaList = personaList, selectedPersona = persona, onPersonaSelected = vm::setPersona)
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
 
             Text(
                 text = "Timings",
-                style = TextStyle(fontSize = 16.sp),
+                style = TextStyle(fontSize = (screenWidth * 0.04).sp),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             TimingRow( label = "What time of day approx. do you normally eat your biggest meal?"
@@ -182,9 +188,13 @@ fun DashboardScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (canSave) {
-                    Text(text = "Save", fontSize = 16.sp)
+                    Text(text = "Save", fontSize = (screenWidth * 0.04).sp)
                 } else {
-                    Text(text = "Please select valid options", fontSize = 16.sp, color = MaterialTheme.colorScheme.error)
+                    Text(
+                        text = "Please select valid options",
+                        fontSize = (screenWidth * 0.04).sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }
@@ -272,13 +282,27 @@ fun FoodCategoriesRow1(
     vegetables: Boolean, onVegetablesChange: (Boolean) -> Unit,
     grains: Boolean, onGrainsChange: (Boolean) -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = fruits, onCheckedChange = onFruitsChange)
-        Text("Fruits", modifier = Modifier.padding(end = 16.dp))
+        Text(
+            "Fruits",
+            modifier = Modifier.padding(end = (screenWidth * 0.04).dp),
+            fontSize = (screenWidth * 0.04).sp
+        )
         Checkbox(checked = vegetables, onCheckedChange = onVegetablesChange)
-        Text("Vegetables", modifier = Modifier.padding(end = 16.dp))
+        Text(
+            "Vegetables",
+            modifier = Modifier.padding(end = (screenWidth * 0.04).dp),
+            fontSize = (screenWidth * 0.04).sp
+        )
         Checkbox(checked = grains, onCheckedChange = onGrainsChange)
-        Text("Grains")
+        Text(
+            "Grains",
+            fontSize = (screenWidth * 0.04).sp
+        )
     }
 }
 
@@ -288,13 +312,27 @@ fun FoodCategoriesRow2(
     seafood: Boolean, onSeafoodChange: (Boolean) -> Unit,
     poultry: Boolean, onPoultryChange: (Boolean) -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = redMeat, onCheckedChange = onRedMeatChange)
-        Text("Red Meat", modifier = Modifier.padding(end = 16.dp))
+        Text(
+            "Red Meat",
+            modifier = Modifier.padding(end = (screenWidth * 0.04).dp),
+            fontSize = (screenWidth * 0.04).sp
+        )
         Checkbox(checked = seafood, onCheckedChange = onSeafoodChange)
-        Text("Seafood", modifier = Modifier.padding(end = 16.dp))
+        Text(
+            "Seafood",
+            modifier = Modifier.padding(end = (screenWidth * 0.02).dp),
+            fontSize = (screenWidth * 0.04).sp
+        )
         Checkbox(checked = poultry, onCheckedChange = onPoultryChange)
-        Text("Poultry")
+        Text(
+            "Poultry",
+            fontSize = (screenWidth * 0.04).sp
+        )
     }
 }
 
@@ -304,13 +342,27 @@ fun FoodCategoriesRow3(
     eggs: Boolean, onEggsChange: (Boolean) -> Unit,
     nutsSeeds: Boolean, onNutsSeedsChange: (Boolean) -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = fish, onCheckedChange = onFishChange)
-        Text("Fish", modifier = Modifier.padding(end = 16.dp))
+        Text(
+            "Fish",
+            modifier = Modifier.padding(end = (screenWidth * 0.04).dp),
+            fontSize = (screenWidth * 0.04).sp
+        )
         Checkbox(checked = eggs, onCheckedChange = onEggsChange)
-        Text("Eggs", modifier = Modifier.padding(end = 16.dp))
+        Text(
+            "Eggs",
+            modifier = Modifier.padding(end = (screenWidth * 0.04).dp),
+            fontSize = (screenWidth * 0.04).sp
+        )
         Checkbox(checked = nutsSeeds, onCheckedChange = onNutsSeedsChange)
-        Text("Nuts/Seeds")
+        Text(
+            "Nuts/Seeds",
+            fontSize = (screenWidth * 0.04).sp
+        )
     }
 }
 

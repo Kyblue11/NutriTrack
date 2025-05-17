@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
@@ -31,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -52,6 +55,10 @@ fun LoginScreen(
     onLoginSuccess: (String) -> Unit,
     onRegister: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+
     val context = LocalContext.current
     val userIds by viewModel.userIds.collectAsStateWithLifecycle()
     val result by viewModel.loginResult.collectAsStateWithLifecycle()
@@ -67,20 +74,23 @@ fun LoginScreen(
                 AuthManager.login(selectedUserId, context)
                 onLoginSuccess(selectedUserId)
             }
-            false -> Toast.makeText(context, "Invalid credentials", Toast.LENGTH_LONG).show() // TODO: toast should be able to pop up multiple times
-            null -> {
-                // Do nothing
-            }
+            false -> Toast.makeText(context, "Invalid credentials", Toast.LENGTH_LONG).show()
+            null -> { /* Do nothing */ }
         }
     }
 
-    Scaffold(topBar = { CenterAlignedTopAppBar(title = { Text("Log in") }) }) { padding ->
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(
+            title = { Text("Log in", fontSize = (screenWidth * 0.05).sp) }
+        )
+    }) { padding ->
         Column(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .verticalScroll(rememberScrollState())
+                .padding((screenWidth * 0.04).dp),
+            verticalArrangement = Arrangement.spacedBy((screenHeight * 0.02).dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ExposedDropdownMenuBox(
@@ -89,12 +99,14 @@ fun LoginScreen(
             ) {
                 OutlinedTextField(
                     value = selectedUserId,
-                    onValueChange = { /*no-op*/ },
+                    onValueChange = { /* no-op */ },
                     readOnly = true,
-                    label = { Text("My ID (Provided by your Clinician)") },
-                    placeholder = { Text("Select ID") },
+                    label = { Text("My ID (Provided by your Clinician)", fontSize = (screenWidth * 0.04).sp) },
+                    placeholder = { Text("Select ID", fontSize = (screenWidth * 0.035).sp) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -102,7 +114,7 @@ fun LoginScreen(
                 ) {
                     userIds.forEach { id ->
                         DropdownMenuItem(
-                            text = { Text(id) },
+                            text = { Text(id, fontSize = (screenWidth * 0.04).sp) },
                             onClick = {
                                 selectedUserId = id
                                 expanded = false
@@ -115,16 +127,15 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
-                placeholder = { Text("Enter your password")},
+                label = { Text("Password", fontSize = (screenWidth * 0.04).sp) },
+                placeholder = { Text("Enter your password", fontSize = (screenWidth * 0.035).sp) },
                 singleLine = true,
-                visualTransformation = if (passwordVisible) VisualTransformation.None
-                else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             painter = painterResource(id = if (passwordVisible) R.drawable.eye_open else R.drawable.eye_close),
-                            contentDescription = if (passwordVisible) "Hide phone" else "Show phone"
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
                         )
                     }
                 },
@@ -132,20 +143,22 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height((screenHeight * 0.02).dp))
 
             Text(
-                text =
-                    """
-                        This app is only for pre-registered users. Please have your ID and phone number ready before continuing.
-                    """.trimIndent(),
+                text = """
+                    This app is only for pre-registered users. Please have your ID and phone number ready before continuing.
+                """.trimIndent(),
                 textAlign = TextAlign.Justify,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    lineHeight = (screenWidth * 0.05).sp
+                ),
+                fontSize = (screenWidth * 0.035).sp
             )
             Divider(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 8.dp)
+                thickness = (screenHeight * 0.001).dp,
+                modifier = Modifier.padding(vertical = (screenHeight * 0.01).dp)
             )
 
             Button(
@@ -153,11 +166,11 @@ fun LoginScreen(
                 enabled = selectedUserId.isNotBlank() && password.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Continue")
+                Text("Continue", fontSize = (screenWidth * 0.045).sp)
             }
 
             TextButton(onClick = onRegister) {
-                Text("Don't have an account? Register")
+                Text("Don't have an account? Register", fontSize = (screenWidth * 0.04).sp)
             }
         }
     }

@@ -36,6 +36,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +56,9 @@ fun InsightsScreen(
     navController: NavHostController,
     onReturnHome : () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
     // kick off load
     LaunchedEffect(userId) { vm.load(userId) }
 
@@ -69,7 +73,7 @@ fun InsightsScreen(
                     Text(
                         text = "Insights: Food Score",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = (screenWidth * 0.05).sp
                     )
                 },
 
@@ -83,9 +87,10 @@ fun InsightsScreen(
                         )
                     }
                 },
+//                modifier = Modifier.height((screenHeight * 0.1).dp)
             )
         },
-        bottomBar = { BottomBar(navController, userId) }
+        bottomBar = { BottomBar(navController, userId, screenWidth, screenHeight) }
 
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
@@ -119,31 +124,33 @@ fun InsightsContent(
     onShareClick: () -> Unit,
     onImproveClick: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding((screenWidth * 0.04).dp)
     ) {
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         subScores.forEach { (label, value) ->
             ScoreRowWithSlider(
                 category = label,
                 score = value
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height((screenHeight * 0.005).dp))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
         Divider()
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
 
         Text(
             text = "Total Food Quality Score",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+            fontSize = (screenWidth * 0.045).sp
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         // Use the same custom slider—this time with the special total settings.
         ScoreRowWithSlider(
@@ -155,10 +162,11 @@ fun InsightsContent(
         // Display the total score value below the slider.
         Text(
             text = "${"%.2f".format(mainTotalScore)}/100",
-            style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.primary)
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary),
+            fontSize = (screenWidth * 0.05).sp
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
         Button(
             onClick = onShareClick,
             modifier = Modifier.fillMaxWidth()
@@ -166,13 +174,13 @@ fun InsightsContent(
             Icon(
                 painter = painterResource(id = R.drawable.share),
                 contentDescription = "Share",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size((screenWidth * 0.05).dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Share with someone")
+            Spacer(modifier = Modifier.width((screenWidth * 0.02).dp))
+            Text("Share with someone", fontSize = (screenWidth * 0.03).sp)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
         Button(
             onClick = onImproveClick,
             modifier = Modifier.fillMaxWidth()
@@ -180,10 +188,10 @@ fun InsightsContent(
             Icon(
                 painter = painterResource(id = R.drawable.coach),
                 contentDescription = "Improve",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size((screenWidth * 0.05).dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Improve my diet!")
+            Spacer(modifier = Modifier.width((screenWidth * 0.01).dp))
+            Text("Improve my diet!", fontSize = (screenWidth * 0.03).sp)
         }
     }
 }
@@ -198,6 +206,9 @@ fun ScoreRowWithSlider(
     score: Double,
     isTotalScore: Boolean = false
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
     // Determine maximum value and fraction.
     val maxScore = if (isTotalScore) {
         100.0
@@ -210,9 +221,9 @@ fun ScoreRowWithSlider(
     val fraction = (score / maxScore).coerceIn(0.0, 1.0).toFloat()
 
     // Define dimensions based on whether this is the total score.
-    val sliderWidth = if (isTotalScore) 400.dp else 190.dp
-    val sliderHeight = if (isTotalScore) 48.dp else 24.dp
-    val scoreTextWidth = 50.dp // Fixed width for score text
+    val sliderWidth = if (isTotalScore) (screenWidth * 0.9).dp else (screenWidth * 0.45).dp
+    val sliderHeight = if (isTotalScore) (screenHeight * 0.06).dp else (screenHeight * 0.025).dp
+    val scoreTextWidth = (screenWidth * 0.12).dp
 
     // Optionally, total slider might have more step indicators. Using 10 steps for total, 5 otherwise.
     val stepCount = if (isTotalScore) 10 else 5
@@ -294,7 +305,9 @@ fun ScoreRowWithSlider(
             Text(
                 text = "${"%.1f".format(score)}/${"%.0f".format(maxScore)}",
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.width(scoreTextWidth) // Fixed width ensures alignment
+                maxLines = 1,
+                modifier = Modifier.width(scoreTextWidth), // Fixed width ensures alignment
+
             )
         }
     }
