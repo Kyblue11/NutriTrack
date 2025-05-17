@@ -22,7 +22,10 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            _userIds.value = repo.getAllUsers().map { it.userId }
+            // only users who have both name & passwordHash non-null
+            _userIds.value = repo.getAllUsers()
+                .filter { it.name != null && it.passwordHash != null }
+                .map { it.userId }
         }
     }
 

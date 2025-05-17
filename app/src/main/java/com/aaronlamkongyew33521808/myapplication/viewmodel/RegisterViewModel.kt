@@ -29,6 +29,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     init {
         viewModelScope.launch {
             val users = repo.getAllUsers()
+                .filter { it.name == null && it.passwordHash == null }
             _userIds.value = users.map { it.userId }
         }
     }
