@@ -123,7 +123,7 @@ class ClinicianViewModel(private val dao: UserDao) : ViewModel() {
                 append("Average score for healthy foods (both fruits and vegetables included) was ${_totalHealthyFoodsMale.value} for makes and ${_totalHealthyFoodsFemale.value} for females")
                 append("Identify three interesting patterns in plain sentences.")
                 append("Make sure to include the numerical scores in your response.")
-                append("By inferring to the healthy food scores and fat scores, the third pattern should be a bold assumption regarding males vs females")
+                append("By inferring to the healthy food scores and fat scores, the third pattern should be a bold assumption regarding lifestyles of males vs females")
                 append("Do not output any formalities (e.g. Here are the patterns I found), just the actual 3 sentences themselves, separated by new lines.")
             }
 

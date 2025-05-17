@@ -39,6 +39,13 @@ class NutriCoachViewModel(
     private val _isFruitOptimal = MutableStateFlow<Boolean?>(null)
     val isFruitOptimal: StateFlow<Boolean?> = _isFruitOptimal
 
+    private val _randomImageUrl = MutableStateFlow(generateRandomImageUrl())
+    val randomImageUrl: StateFlow<String> = _randomImageUrl
+
+    private fun generateRandomImageUrl(): String {
+        return "https://picsum.photos/400?random=${System.currentTimeMillis()}"
+    }
+
     suspend fun fetchFruits() { // TODO: is this bad practice?
         try {
             _fruits.value = repo.fetchFruits()
