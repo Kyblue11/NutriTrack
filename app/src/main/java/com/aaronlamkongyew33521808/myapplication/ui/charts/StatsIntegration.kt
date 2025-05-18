@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -25,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.shape.CircleShape
+
 
 // Disclaimer:
 // GenAi model ChatGPT 4.o was used to format and generate
@@ -280,6 +283,71 @@ fun ChartScatter(
         ) {
             Text(yAxisLabel, style = MaterialTheme.typography.bodySmall.copy(color = colors.onSurfaceVariant))
             Text(xAxisLabel, style = MaterialTheme.typography.bodySmall.copy(color = colors.onSurfaceVariant))
+        }
+    }
+}
+
+@Composable
+fun ChartPie(
+    data: Map<String,Double>,
+    modifier: Modifier = Modifier,
+    chartTitle: String = "My HEIFA Sub‑scores"
+) {
+    // pre‐compute total and angles
+    val total = data.values.sum().coerceAtLeast(1.0)
+    val angles = remember(data) {
+        data.values.map { it / total * 360f }
+    }
+    val colors = remember {
+        listOf(
+            Color(0xFFEF5350), Color(0xFFAB47BC), Color(0xFF29B6F6),
+            Color(0xFF66BB6A), Color(0xFFFFA726), Color(0xFF8D6E63),
+            Color(0xFF26A69A), Color(0xFFFF7043), Color(0xFF5C6BC0),
+            Color(0xFFF06292), Color(0xFF78909C), Color(0xFFD4E157),
+            Color(0xFF5E35B1)
+        )
+    }
+
+    Column(modifier.padding(16.dp)) {
+        Text(
+            chartTitle,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Canvas(Modifier.size(200.dp)) {
+                var startAngle = -90f
+                data.keys.zip(angles).forEachIndexed { i, (label, sweep) ->
+                    drawArc(
+                        color = colors[i % colors.size],
+                        startAngle = startAngle,
+                        sweepAngle = sweep.toFloat(),
+                        useCenter = true
+                    )
+                    startAngle += sweep.toFloat()
+                }
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        // Legend
+        Column {
+            data.keys.zip(angles).forEachIndexed { i, (label, _) ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 2.dp)
+                ) {
+                    Box(
+                        Modifier
+                            .size(16.dp)
+                            .background(colors[i % colors.size], shape = CircleShape)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(label, style = MaterialTheme.typography.bodySmall)
+                }
+            }
         }
     }
 }

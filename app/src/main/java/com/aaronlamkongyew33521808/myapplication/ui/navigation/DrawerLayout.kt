@@ -57,7 +57,7 @@ fun DrawerLayout(
                         scope.launch { drawerState.close() }
                         // assume AuthManager.userId.value is your current ID
                         val id = if (userId == null) {
-                            "1"
+                            "1" // placeholder
                         } else {
                             userId
                         }
@@ -70,7 +70,12 @@ fun DrawerLayout(
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
-                        navController.navigate(Routes.StatsCombined)
+                        val id = if (userId == null) {
+                            "1"
+                        } else {
+                            userId
+                        }
+                        navController.navigate(Routes.StatsCombined.replace("{userId}", id))
                     }
                 )
                 // …etc

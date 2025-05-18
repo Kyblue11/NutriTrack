@@ -49,7 +49,7 @@ object Routes {
     const val NutriCoach = "coach/{userId}"
     const val Settings = "settings/{userId}"
     const val ClinicianDashboard = "clinician_dashboard/{userId}"
-    const val StatsCombined = "stats/combined"
+    const val StatsCombined = "stats/combined/{userId}"
 }
 
 @Composable
@@ -245,15 +245,21 @@ fun AppNavGraph() {
                 )
             }
 
-            composable(Routes.StatsCombined) {
+            composable(Routes.StatsCombined,
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId").orEmpty()
                 val vm: StatsViewModel = viewModel(
                     factory = StatsViewModelFactory(
                         StatsRepository(AppDatabase.getDatabase(LocalContext.current))
                     )
                 )
+                val insightsvm: InsightsViewModel = viewModel()
                 CombinedStatsScreen(
                     vm,
+                    insightsvm,
                     onMenuClick = openDrawer,
+                    userId = userId
                 )
             }
         }
