@@ -2,6 +2,7 @@ package com.aaronlamkongyew33521808.myapplication.ui.clinician
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -38,15 +45,20 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.data.dao.UserDao
+import com.aaronlamkongyew33521808.myapplication.ui.charts.CombinedStatsScreen
+import com.aaronlamkongyew33521808.myapplication.ui.charts.SubscoreScatterScreen
+import com.aaronlamkongyew33521808.myapplication.ui.charts.TotalScoreChartScreen
 import com.aaronlamkongyew33521808.myapplication.viewmodel.ClinicianViewModel
-
+import com.aaronlamkongyew33521808.myapplication.viewmodel.StatsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClinicianDashboardScreen(
+    statsViewModel: StatsViewModel,
     onDone: () -> Unit,
+    onReturnHome: () -> Unit,
     dao: UserDao = AppDatabase.getDatabase(LocalContext.current).userDao(),
-    viewModel: ClinicianViewModel = viewModel(factory = ClinicianViewModel.Factory(dao))
+    viewModel: ClinicianViewModel = viewModel(factory = ClinicianViewModel.Factory(dao)),
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
@@ -73,6 +85,16 @@ fun ClinicianDashboardScreen(
                     fontSize = (screenWidth * 0.05).sp
                 )
             },
+            navigationIcon = {
+                IconButton(onClick = {
+                    onReturnHome()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            },
         )
     },) { padding ->
         Column(
@@ -86,6 +108,8 @@ fun ClinicianDashboardScreen(
             Text("Average HEIFA (Male): ${"%.1f".format(avgMale)}")
             Text("Average HEIFA (Female): ${"%.1f".format(avgFemale)}")
             Spacer(Modifier.height((screenHeight * 0.02).dp))
+
+
             Button(
                 onClick = { viewModel.findPatterns() },
                 enabled = !loading
@@ -97,9 +121,27 @@ fun ClinicianDashboardScreen(
                 }
             }
 
-            Spacer(Modifier.weight(1f))
-            Button(onClick = onDone, Modifier.align(Alignment.End)) {
+            Spacer(Modifier.weight(0.5f))
+            Button(onClick = onDone) {
                 Text("Done")
+            }
+
+            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+
+            Box(
+                Modifier
+                    .fillMaxWidth()
+            ) {
+                TotalScoreChartScreen(viewModel = statsViewModel)
+            }
+
+            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+
+            Box(
+                Modifier
+                    .fillMaxWidth()
+            ) {
+                SubscoreScatterScreen(viewModel = statsViewModel)
             }
         }
     }

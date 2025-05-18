@@ -16,6 +16,8 @@ import com.aaronlamkongyew33521808.myapplication.data.api.buildAPI
 import com.aaronlamkongyew33521808.myapplication.repository.HomeRepository
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
 import com.aaronlamkongyew33521808.myapplication.repository.QuestionnaireRepository
+import com.aaronlamkongyew33521808.myapplication.repository.StatsRepository
+import com.aaronlamkongyew33521808.myapplication.ui.charts.CombinedStatsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.clinician.ClinicianDashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.dashboard.DashboardScreen
 import com.aaronlamkongyew33521808.myapplication.ui.home.HomeScreen
@@ -32,6 +34,8 @@ import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.NutriCoachViewModelFactory
 import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.SettingsViewModel
+import com.aaronlamkongyew33521808.myapplication.viewmodel.StatsViewModel
+import com.aaronlamkongyew33521808.myapplication.viewmodel.StatsViewModelFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -44,7 +48,8 @@ object Routes {
     const val Insights = "insights/{userId}"
     const val NutriCoach = "coach/{userId}"
     const val Settings = "settings/{userId}"
-    const val ClinicianDashboard = "clinician_dashboard"
+    const val ClinicianDashboard = "clinician_dashboard/{userId}"
+    const val StatsCombined = "stats/combined"
 }
 
 @Composable
@@ -58,177 +63,199 @@ fun AppNavGraph() {
         Routes.Welcome
     }
 
+    DrawerLayout(navController = navController, userId = currentUser) { openDrawer ->
+        NavHost(navController = navController, startDestination = startDestination) {
 
-    NavHost(navController = navController, startDestination = startDestination) {
-
-        composable(Routes.Welcome) {
-            WelcomeScreen {
-                navController.navigate(Routes.Login) {
+            composable(Routes.Welcome) {
+                WelcomeScreen {
+                    navController.navigate(Routes.Login) {
+                    }
                 }
             }
-        }
 
-        composable(Routes.Login) {
-            val vm: LoginViewModel = viewModel()
-            LoginScreen(
-                viewModel = vm,
-                onLoginSuccess = { id ->
-                    navController.navigate("dashboard/$id")
-                },
-                onRegister = { navController.navigate(Routes.Register) }
-            )
-        }
+            composable(Routes.Login) {
+                val vm: LoginViewModel = viewModel()
+                LoginScreen(
+                    viewModel = vm,
+                    onLoginSuccess = { id ->
+                        navController.navigate("dashboard/$id")
+                    },
+                    onRegister = { navController.navigate(Routes.Register) }
+                )
+            }
 
-        composable(Routes.Register) {
-            val vm: RegisterViewModel = viewModel()
-            RegisterScreen(
-                viewModel = vm,
-                onDone = {
-                    navController.navigate(Routes.Login) {
-                        popUpTo(Routes.Register) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        composable(
-            route = Routes.Dashboard,
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            DashboardScreen(
-                userId = userId,
-                navController = navController
-            )
-        }
-
-        composable(
-            route = Routes.Home,
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            HomeScreen(
-                userId = userId,
-                onEditClick = { navController.navigate("dashboard/$userId") },
-                onInsights = {
-                    navController.navigate("insights/$userId")
-                    {
-                        popUpTo(Routes.Home) {
-                            inclusive = true
-                        } // needed to prevent bug [Insights Screen to Home Screen via bottom bar]
-                    }
-                },
-                navController = navController
-            )
-        }
-
-        composable(
-            route = Routes.Insights,
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            val vm: InsightsViewModel = viewModel()
-            InsightsScreen(
-                userId = userId,
-                vm = vm,
-                onReturnHome = {
-                    navController.navigate("home/$userId")
-                    {
-                        popUpTo(Routes.Insights) {
-                            inclusive = true
-                        } // needed to prevent bug [Home Screen to Insights Screen via bottom bar]
-                    }
-
-                },
-                onImproveClick = {
-                    navController.navigate("coach/$userId")
-                    {
-                        popUpTo(Routes.Insights) {
-                            inclusive = true
+            composable(Routes.Register) {
+                val vm: RegisterViewModel = viewModel()
+                RegisterScreen(
+                    viewModel = vm,
+                    onDone = {
+                        navController.navigate(Routes.Login) {
+                            popUpTo(Routes.Register) { inclusive = true }
                         }
                     }
-                },
-                navController = navController
-            )
-        }
+                )
+            }
 
-        composable(
-            Routes.NutriCoach, arguments = listOf(
-                navArgument("userId")
-                { type = NavType.StringType }
-            )
-        )
-        { back ->
-            val userId = back.arguments!!.getString("userId")!!
-            val context = LocalContext.current
+            composable(
+                route = Routes.Dashboard,
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                DashboardScreen(
+                    userId = userId,
+                    navController = navController
+                )
+            }
 
-            val db = AppDatabase.getDatabase(context)
-            val dao = db.nutriCoachDao()
-            val repo = NutriCoachRepository(buildAPI.fruityApi, dao)
-            val homeRepo = HomeRepository(
-                db.userDao()
-            )
-            val quesRepo = QuestionnaireRepository(
-                db.questionnaireDao()
-            )
+            composable(
+                route = Routes.Home,
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                HomeScreen(
+                    userId = userId,
+                    onEditClick = { navController.navigate("dashboard/$userId") },
+                    onInsights = {
+                        navController.navigate("insights/$userId")
+                        {
+                            popUpTo(Routes.Home) {
+                                inclusive = true
+                            } // needed to prevent bug [Insights Screen to Home Screen via bottom bar]
+                        }
+                    },
+                    onMenuClick = openDrawer,
+                    navController = navController
+                )
+            }
 
-            val vm: NutriCoachViewModel = viewModel(
-                factory = NutriCoachViewModelFactory(
-                    repo,
-                    homeRepo,
-                    quesRepo
+            composable(
+                route = Routes.Insights,
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                val vm: InsightsViewModel = viewModel()
+                InsightsScreen(
+                    userId = userId,
+                    vm = vm,
+                    onReturnHome = {
+                        navController.navigate("home/$userId")
+                        {
+                            popUpTo(Routes.Insights) {
+                                inclusive = true
+                            } // needed to prevent bug [Home Screen to Insights Screen via bottom bar]
+                        }
+
+                    },
+                    onImproveClick = {
+                        navController.navigate("coach/$userId")
+                        {
+                            popUpTo(Routes.Insights) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    navController = navController
+                )
+            }
+
+            composable(
+                Routes.NutriCoach, arguments = listOf(
+                    navArgument("userId")
+                    { type = NavType.StringType }
                 )
             )
-            NutriCoachScreen(
-                userId,
-                viewModel = vm,
-                navController = navController,
-                onReturnHome = {
-                    navController.navigate("home/$userId") {
-                        popUpTo(Routes.NutriCoach) {
-                            inclusive = true
-                        }
-                    }
-                }
-            )
-        }
+            { back ->
+                val userId = back.arguments!!.getString("userId")!!
+                val context = LocalContext.current
 
-        composable(
-            route = Routes.Settings,
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId").orEmpty()
-            val vm: SettingsViewModel = viewModel(
-                factory = SettingsViewModel.Factory(
-                    AppDatabase.getDatabase(LocalContext.current).userDao(), userId
+                val db = AppDatabase.getDatabase(context)
+                val dao = db.nutriCoachDao()
+                val repo = NutriCoachRepository(buildAPI.fruityApi, dao)
+                val homeRepo = HomeRepository(
+                    db.userDao()
                 )
-            )
-            SettingsScreen(
-                viewModel = vm,
-                onLogout = {
-                    // clear any session if you have one, then:
-                    navController.navigate(Routes.Login) {
-                        popUpTo(Routes.Welcome) { inclusive = false }
-                    }
-                },
-                onClinician = {
-                    navController.navigate(Routes.ClinicianDashboard)
-                },
-                navController = navController,
-                onReturnHome = {
-                    navController.navigate("home/$userId") {
-                        popUpTo(Routes.Settings) {
-                            inclusive = true
+                val quesRepo = QuestionnaireRepository(
+                    db.questionnaireDao()
+                )
+
+                val vm: NutriCoachViewModel = viewModel(
+                    factory = NutriCoachViewModelFactory(
+                        repo,
+                        homeRepo,
+                        quesRepo
+                    )
+                )
+                NutriCoachScreen(
+                    userId,
+                    viewModel = vm,
+                    navController = navController,
+                    onReturnHome = {
+                        navController.navigate("home/$userId") {
+                            popUpTo(Routes.NutriCoach) {
+                                inclusive = true
+                            }
                         }
                     }
-                }
-            )
-        }
+                )
+            }
 
-        composable(Routes.ClinicianDashboard) {
-            ClinicianDashboardScreen(
-                onDone = { navController.popBackStack() }
-            )
+            composable(
+                route = Routes.Settings,
+                arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId").orEmpty()
+                val vm: SettingsViewModel = viewModel(
+                    factory = SettingsViewModel.Factory(
+                        AppDatabase.getDatabase(LocalContext.current).userDao(), userId
+                    )
+                )
+                SettingsScreen(
+                    viewModel = vm,
+                    onLogout = {
+                        // clear any session if you have one, then:
+                        navController.navigate(Routes.Login) {
+                            popUpTo(Routes.Welcome) { inclusive = false }
+                        }
+                    },
+                    onClinician = {
+                        navController.navigate(Routes.ClinicianDashboard)
+                    },
+                    navController = navController,
+                    onReturnHome = {
+                        navController.navigate("home/$userId") {
+                            popUpTo(Routes.Settings) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable(Routes.ClinicianDashboard) {
+                val statsViewModel: StatsViewModel = viewModel(
+                    factory = StatsViewModelFactory(
+                        StatsRepository(AppDatabase.getDatabase(LocalContext.current))
+                    )
+                )
+                ClinicianDashboardScreen(
+                    statsViewModel,
+                    onDone = { navController.popBackStack() },
+                    onReturnHome = {navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(Routes.StatsCombined) {
+                val vm: StatsViewModel = viewModel(
+                    factory = StatsViewModelFactory(
+                        StatsRepository(AppDatabase.getDatabase(LocalContext.current))
+                    )
+                )
+                CombinedStatsScreen(
+                    vm,
+                    onMenuClick = openDrawer,
+                )
+            }
         }
     }
 }

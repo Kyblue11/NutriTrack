@@ -29,6 +29,7 @@ fun HomeScreen(
     userId: String,
     onEditClick: () -> Unit,
     onInsights: () -> Unit,
+    onMenuClick: () -> Unit,
     viewModel: HomeViewModel = viewModel(),
     navController: NavHostController
 ) {
@@ -55,10 +56,13 @@ fun HomeScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = {
+                        onMenuClick()
+                    }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Menu,
-                            contentDescription = "HamburgerMenu"
+                            contentDescription = "DrawerMenu"
                         )
                     }
                 },
