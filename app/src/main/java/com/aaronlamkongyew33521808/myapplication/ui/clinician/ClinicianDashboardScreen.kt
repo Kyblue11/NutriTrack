@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,6 +69,8 @@ fun ClinicianDashboardScreen(
     val avgFemale by viewModel.avgFemale.collectAsState(initial = 0.0)
     val insights  by viewModel.insights.collectAsState(initial = emptyList())
     val loading   by viewModel.loading.collectAsState()
+
+    var showGraphs by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadAverages()
@@ -107,11 +110,13 @@ fun ClinicianDashboardScreen(
         ) {
             Text("Average HEIFA (Male): ${"%.1f".format(avgMale)}")
             Text("Average HEIFA (Female): ${"%.1f".format(avgFemale)}")
-            Spacer(Modifier.height((screenHeight * 0.02).dp))
+            Spacer(Modifier.height((screenHeight * 0.01).dp))
 
 
             Button(
-                onClick = { viewModel.findPatterns() },
+                onClick = { viewModel.findPatterns();
+                          showGraphs = true
+                          },
                 enabled = !loading
             ) { Text(if (loading) "Thinking…" else "Find Data Patterns") }
 
@@ -121,27 +126,32 @@ fun ClinicianDashboardScreen(
                 }
             }
 
-            Spacer(Modifier.weight(0.5f))
+            Spacer(Modifier.weight(0.3f))
             Button(onClick = onDone) {
                 Text("Done")
             }
 
             Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
 
-            Box(
-                Modifier
-                    .fillMaxWidth()
-            ) {
-                TotalScoreChartScreen(viewModel = statsViewModel)
-            }
+            if (true) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                ) {
+                    TotalScoreChartScreen(viewModel = statsViewModel)
+                }
 
-            Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+                Divider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                )
 
-            Box(
-                Modifier
-                    .fillMaxWidth()
-            ) {
-                SubscoreScatterScreen(viewModel = statsViewModel)
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                ) {
+                    SubscoreScatterScreen(viewModel = statsViewModel)
+                }
             }
         }
     }
