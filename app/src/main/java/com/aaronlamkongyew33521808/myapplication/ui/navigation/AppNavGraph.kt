@@ -1,7 +1,9 @@
 package com.aaronlamkongyew33521808.myapplication.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -36,10 +38,13 @@ import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.SettingsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.StatsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.StatsViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Routes {
+    const val Launcher = "launcher"
     const val Welcome = "welcome"
     const val Login = "login"
     const val Register = "register"
@@ -54,17 +59,49 @@ object Routes {
 
 @Composable
 fun AppNavGraph() {
+    val context = LocalContext.current
     val navController = rememberNavController()
-    val currentUser   by AuthManager.userId
-    // if there's a user, skip straight in; otherwise show welcome/login
-    val startDestination = if (currentUser != null) {
-        "dashboard/$currentUser"
-    } else {
-        Routes.Welcome
+
+    // 1. read current user once
+    val currentUser by AuthManager.userId
+
+    // 2. ask the DB if they've filled the questionnaire (null = idk, maybe)
+    val hasFilled by produceState<Boolean?>(initialValue = null, currentUser) {
+        value = if (currentUser == null) {
+            false
+        } else {
+            // run on background thread
+            withContext(Dispatchers.IO) {
+                AppDatabase
+                    .getDatabase(context)
+                    .questionnaireDao()
+                    .getByUserId(currentUser!!)
+                    ?.let { true }
+                    ?: false
+            }
+        }
+    }
+
+    // 3. until we know `hasFilled` is true, we don't navigate anywhere
+    LaunchedEffect(currentUser, hasFilled) {
+        if (hasFilled == null) return@LaunchedEffect
+
+        when {
+            currentUser == null -> navController.navigate(Routes.Welcome) {
+                popUpTo(Routes.Launcher) { inclusive = true }
+            }
+            hasFilled == true -> navController.navigate("home/$currentUser") {
+                popUpTo(Routes.Launcher) { inclusive = true }
+            }
+            else -> navController.navigate("dashboard/$currentUser") {
+                popUpTo(Routes.Launcher) { inclusive = true }
+            }
+        }
     }
 
     DrawerLayout(navController = navController, userId = currentUser) { openDrawer ->
-        NavHost(navController = navController, startDestination = startDestination) {
+        NavHost(navController = navController, startDestination = Routes.Welcome) {
+
 
             composable(Routes.Welcome) {
                 WelcomeScreen {
