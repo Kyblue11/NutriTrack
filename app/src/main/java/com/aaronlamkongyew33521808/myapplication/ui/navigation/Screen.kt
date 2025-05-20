@@ -38,8 +38,14 @@ fun BottomBar(navController: NavHostController, userId: String, screenWidth: Int
     val navBackStack by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStack?.destination?.route
 
+    val navBarHeight = if (screenHeight < screenWidth) (screenHeight * 0.2).dp else (screenHeight * 0.15).dp
+    val iconSize = if (screenHeight < screenWidth) (screenWidth * 0.02).dp else (screenWidth * 0.05).dp
+    val fontSize = if (screenHeight < screenWidth) (screenWidth * 0.015).sp else (screenWidth * 0.025).sp
+
+
     NavigationBar(
-        //modifier = Modifier.height((screenHeight * 0.08).dp)
+//        modifier = Modifier.height((screenHeight * 0.2).dp)
+        modifier = Modifier.height(navBarHeight)
     ) {
         items.forEach { screen ->
             val routePrefix = screen.route.substringBefore("/{")
@@ -48,13 +54,15 @@ fun BottomBar(navController: NavHostController, userId: String, screenWidth: Int
                     Icon(
                         painterResource(screen.icon),
                         contentDescription = screen.label,
-                        modifier = Modifier.size((screenWidth * 0.07).dp)
+                        modifier = Modifier.size(iconSize)
+//                        modifier = Modifier.size((screenWidth * 0.07).dp)
                     )
                 },
                 label = {
                     Text(
                         screen.label,
-                        fontSize = (screenWidth * 0.035).sp
+                        fontSize = fontSize
+//                        fontSize = (screenWidth * 0.035).sp
                     )
                 },
                 selected = currentRoute?.startsWith(routePrefix) == true,
