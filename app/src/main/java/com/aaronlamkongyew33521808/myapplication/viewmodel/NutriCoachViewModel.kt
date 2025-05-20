@@ -42,6 +42,9 @@ class NutriCoachViewModel(
     private val _randomImageUrl = MutableStateFlow(generateRandomImageUrl())
     val randomImageUrl: StateFlow<String> = _randomImageUrl
 
+    private val _loading   = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
+
     private fun generateRandomImageUrl(): String {
         return "https://picsum.photos/400?random=${System.currentTimeMillis()}"
     }
@@ -58,6 +61,7 @@ class NutriCoachViewModel(
 fun generateTip(userId: String) {
     viewModelScope.launch(Dispatchers.IO) {
         try {
+            _loading.value = true
             val questionnaire = quesRepo.load(userId)
             val needsFruits = questionnaire?.fruits == false
             val needsVeggies = questionnaire?.vegetables == false
@@ -88,6 +92,9 @@ fun generateTip(userId: String) {
         } catch (e: Exception) {
             Log.e("NutriCoachVM", "AI generation failed", e)
             _genTip.value = "Failed to fetch tip: ${e.localizedMessage}"
+        }
+        finally {
+            _loading.value = false
         }
     }
 }
