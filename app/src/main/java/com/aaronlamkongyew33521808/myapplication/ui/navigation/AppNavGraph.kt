@@ -1,5 +1,6 @@
 package com.aaronlamkongyew33521808.myapplication.ui.navigation
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,57 +60,63 @@ object Routes {
 
 @Composable
 fun AppNavGraph() {
-    val context = LocalContext.current
+    val context       = LocalContext.current
+    val prefs         = context.getSharedPreferences("NutriTrackPrefs", Context.MODE_PRIVATE)
+    val lastRoutePref = prefs.getString("lastRoute", null)
+
     val navController = rememberNavController()
 
     // 1. read current user once
     val currentUser by AuthManager.userId
 
-    // 2. ask the DB if they've filled the questionnaire (null = idk, maybe)
-    val hasFilled by produceState<Boolean?>(initialValue = null, currentUser) {
-        value = if (currentUser == null) {
-            false
-        } else {
-            // run on background thread
-            withContext(Dispatchers.IO) {
-                AppDatabase
-                    .getDatabase(context)
-                    .questionnaireDao()
-                    .getByUserId(currentUser!!)
-                    ?.let { true }
-                    ?: false
-            }
-        }
-    }
+DrawerLayout(navController = navController, userId = currentUser) { openDrawer ->
+    NavHost(navController, startDestination = Routes.Launcher) {
 
-    // 3. until we know `hasFilled` is true, we don't navigate anywhere
+        // 1) The “launcher” placeholder
+        composable(Routes.Launcher) {
+            // 1a) Check questionnaire filled
+            val hasFilled by produceState<Boolean?>(initialValue = null, currentUser) {
+                value = if (currentUser == null) {
+                    false
+                } else {
+                    withContext(Dispatchers.IO) {
+                        AppDatabase.getDatabase(context)
+                            .questionnaireDao()
+                            .getByUserId(currentUser!!)!= null
+                    }
+                }
+            }
+
+    // until we know `hasFilled` is true, we don't navigate anywhere
     LaunchedEffect(currentUser, hasFilled) {
         if (hasFilled == null) return@LaunchedEffect
 
-        when {
-            currentUser == null -> navController.navigate(Routes.Welcome) {
-                popUpTo(Routes.Launcher) { inclusive = true }
-            }
-            hasFilled == true -> navController.navigate(
-                Routes.Home.replace("{userId}", currentUser!!)
-            ) {
-                popUpTo(Routes.Launcher) { inclusive = true }
-            }
-            else -> navController.navigate(
-                Routes.Dashboard.replace("{userId}", currentUser!!)
-            ) {
-                popUpTo(Routes.Launcher) { inclusive = true }
-            }
-        }
-    }
+                when {
+                    currentUser == null ->
+                        navController.navigate(Routes.Welcome) {
+                            popUpTo(Routes.Launcher) { inclusive = true }
+                        }
 
-    DrawerLayout(navController = navController, userId = currentUser) { openDrawer ->
-    NavHost(
-        navController  = navController,
-        startDestination = Routes.Launcher
-    ) {
-        // launcher slot, invisible UI, just sits there while we decide
-        composable(Routes.Launcher) {
+                    hasFilled == false ->
+                        navController.navigate(Routes.Dashboard.replace("{userId}", currentUser!!)) {
+                            popUpTo(Routes.Launcher) { inclusive = true }
+                        }
+
+                    else /* logged in & questionnaire done */ -> {
+                        // prefer lastRoute if it exists and matches one of our routes:
+                        val start = lastRoutePref
+                            ?.takeIf { it.startsWith("home/") ||
+                                    it.startsWith("insights/") ||
+                                    it.startsWith("coach/") ||
+                                    it.startsWith("settings/") }
+                            ?: Routes.Home.replace("{userId}", currentUser!!)
+
+                        navController.navigate(start) {
+                            popUpTo(Routes.Launcher) { inclusive = true }
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -125,7 +132,17 @@ fun AppNavGraph() {
                 LoginScreen(
                     viewModel = vm,
                     onLoginSuccess = { id ->
-                        navController.navigate("dashboard/$id")
+                        // clear out any stale lastRoute
+                        context.getSharedPreferences("NutriTrackPrefs", Context.MODE_PRIVATE)
+                            .edit()
+                            .remove("lastRoute")
+                            .apply()
+                        // update AuthManager
+                        AuthManager.login(id, context)
+                        // go via launcher so that my hasFilled logic fires up
+                        navController.navigate(Routes.Launcher) {
+                            popUpTo(Routes.Welcome) { inclusive = true }
+                        }
                     },
                     onRegister = { navController.navigate(Routes.Register) }
                 )
