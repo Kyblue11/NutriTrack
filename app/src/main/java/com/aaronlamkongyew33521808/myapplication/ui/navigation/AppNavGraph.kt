@@ -90,17 +90,27 @@ fun AppNavGraph() {
             currentUser == null -> navController.navigate(Routes.Welcome) {
                 popUpTo(Routes.Launcher) { inclusive = true }
             }
-            hasFilled == true -> navController.navigate("home/$currentUser") {
+            hasFilled == true -> navController.navigate(
+                Routes.Home.replace("{userId}", currentUser!!)
+            ) {
                 popUpTo(Routes.Launcher) { inclusive = true }
             }
-            else -> navController.navigate("dashboard/$currentUser") {
+            else -> navController.navigate(
+                Routes.Dashboard.replace("{userId}", currentUser!!)
+            ) {
                 popUpTo(Routes.Launcher) { inclusive = true }
             }
         }
     }
 
     DrawerLayout(navController = navController, userId = currentUser) { openDrawer ->
-        NavHost(navController = navController, startDestination = Routes.Welcome) {
+    NavHost(
+        navController  = navController,
+        startDestination = Routes.Launcher
+    ) {
+        // launcher slot, invisible UI, just sits there while we decide
+        composable(Routes.Launcher) {
+        }
 
 
             composable(Routes.Welcome) {
