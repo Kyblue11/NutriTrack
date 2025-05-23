@@ -42,12 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aaronlamkongyew33521808.myapplication.viewmodel.StatsViewModel
 import androidx.compose.ui.Alignment
+import com.aaronlamkongyew33521808.myapplication.viewmodel.ClinicianKeyViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CombinedStatsScreen(
     viewModel: StatsViewModel,
+    keyVm: ClinicianKeyViewModel,
     insightsViewModel: InsightsViewModel,
     onMenuClick: () -> Unit,
     userId: String
@@ -56,11 +58,12 @@ fun CombinedStatsScreen(
 
     LaunchedEffect(userId) { insightsViewModel.load(userId) }
     val mySubs    by insightsViewModel.subScores.collectAsState()
+    val passkey by keyVm.key.collectAsState()
+
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var enteredKey by rememberSaveable { mutableStateOf("") }
     var showAdvanced by rememberSaveable { mutableStateOf(false) }
-    val correctKey = "dollar-entry-apples"
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
@@ -123,7 +126,7 @@ fun CombinedStatsScreen(
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            if (enteredKey == correctKey) {
+                            if (enteredKey == passkey) {
                                 showAdvanced = true
                             } else {
                                 Toast.makeText(context, "Wrong passphrase", Toast.LENGTH_SHORT).show()

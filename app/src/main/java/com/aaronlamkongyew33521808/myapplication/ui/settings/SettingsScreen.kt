@@ -58,11 +58,13 @@ import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import kotlinx.coroutines.launch
 
 import  com.aaronlamkongyew33521808.myapplication.ui.register.isPasswordSecure
+import com.aaronlamkongyew33521808.myapplication.viewmodel.ClinicianKeyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
+    keyViewModel: ClinicianKeyViewModel,
     onLogout: () -> Unit,
     onClinician: () -> Unit,
     navController: NavHostController,
@@ -71,6 +73,8 @@ fun SettingsScreen(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
+
+    val passkey by keyViewModel.key.collectAsState()
 
     val name by viewModel.name.collectAsState()
     val phone by viewModel.phone.collectAsState()
@@ -308,7 +312,7 @@ fun SettingsScreen(
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            if (passphrase == "dollar-entry-apples") {
+                            if (passphrase == passkey) {
                                 onClinician()
                             } else {
                                 Toast.makeText(

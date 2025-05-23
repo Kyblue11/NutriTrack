@@ -16,6 +16,7 @@ import com.aaronlamkongyew33521808.myapplication.auth.AuthManager
 import com.aaronlamkongyew33521808.myapplication.data.AppDatabase
 import com.aaronlamkongyew33521808.myapplication.data.api.FruityViceApi
 import com.aaronlamkongyew33521808.myapplication.data.api.buildAPI
+import com.aaronlamkongyew33521808.myapplication.repository.ClinicianKeyRepository
 import com.aaronlamkongyew33521808.myapplication.repository.HomeRepository
 import com.aaronlamkongyew33521808.myapplication.repository.NutriCoachRepository
 import com.aaronlamkongyew33521808.myapplication.repository.QuestionnaireRepository
@@ -30,6 +31,8 @@ import com.aaronlamkongyew33521808.myapplication.ui.nutricoach.NutriCoachScreen
 import com.aaronlamkongyew33521808.myapplication.ui.register.RegisterScreen
 import com.aaronlamkongyew33521808.myapplication.ui.settings.SettingsScreen
 import com.aaronlamkongyew33521808.myapplication.ui.welcome.WelcomeScreen
+import com.aaronlamkongyew33521808.myapplication.viewmodel.ClinicianKeyViewModel
+import com.aaronlamkongyew33521808.myapplication.viewmodel.ClinicianKeyViewModelFactory
 import com.aaronlamkongyew33521808.myapplication.viewmodel.ClinicianViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.InsightsViewModel
 import com.aaronlamkongyew33521808.myapplication.viewmodel.LoginViewModel
@@ -273,8 +276,14 @@ DrawerLayout(navController = navController, userId = currentUser) { openDrawer -
                         AppDatabase.getDatabase(LocalContext.current).userDao(), userId
                     )
                 )
+                val keyVm: ClinicianKeyViewModel = viewModel(
+                    factory = ClinicianKeyViewModelFactory(
+                        ClinicianKeyRepository(AppDatabase.getDatabase(LocalContext.current))
+                    )
+                )
                 SettingsScreen(
                     viewModel = vm,
+                    keyViewModel = keyVm,
                     onLogout = {
                         // clear any session if you have one, then:
                         navController.navigate(Routes.Login) {
@@ -318,9 +327,15 @@ DrawerLayout(navController = navController, userId = currentUser) { openDrawer -
                         StatsRepository(AppDatabase.getDatabase(LocalContext.current))
                     )
                 )
+                val keyVm: ClinicianKeyViewModel = viewModel(
+                    factory = ClinicianKeyViewModelFactory(
+                        ClinicianKeyRepository(AppDatabase.getDatabase(LocalContext.current))
+                    )
+                )
                 val insightsvm: InsightsViewModel = viewModel()
                 CombinedStatsScreen(
                     vm,
+                    keyVm,
                     insightsvm,
                     onMenuClick = openDrawer,
                     userId = userId
