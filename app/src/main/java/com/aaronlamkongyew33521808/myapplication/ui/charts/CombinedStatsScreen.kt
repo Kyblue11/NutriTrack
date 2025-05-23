@@ -105,7 +105,7 @@ fun CombinedStatsScreen(
                 onClick = { showDialog = true },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Show all users", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Show all users", )
             }
 
             if (showDialog) {

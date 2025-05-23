@@ -108,7 +108,7 @@ fun generateTip(userId: String) {
     fun checkFruitOptimal(userId: String) {
         viewModelScope.launch {
             val user = homeRepo.getUserById(userId)
-            val optimal = (user?.fruitServeSize ?: 0.0) >= 5 &&
+            val optimal = (user?.fruitServeSize ?: 0.0) >= 2 &&
                     (user?.fruitVariationScore ?: 0.0) >= 5
             _isFruitOptimal.value = optimal
         }
