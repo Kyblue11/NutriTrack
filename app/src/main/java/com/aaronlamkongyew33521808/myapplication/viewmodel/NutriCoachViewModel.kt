@@ -42,6 +42,9 @@ class NutriCoachViewModel(
     private val _randomImageUrl = MutableStateFlow(generateRandomImageUrl())
     val randomImageUrl: StateFlow<String> = _randomImageUrl
 
+    private val _loading   = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
+
     private fun generateRandomImageUrl(): String {
         return "https://picsum.photos/400?random=${System.currentTimeMillis()}"
     }
@@ -58,6 +61,7 @@ class NutriCoachViewModel(
 fun generateTip(userId: String) {
     viewModelScope.launch(Dispatchers.IO) {
         try {
+            _loading.value = true
             val questionnaire = quesRepo.load(userId)
             val needsFruits = questionnaire?.fruits == false
             val needsVeggies = questionnaire?.vegetables == false
@@ -89,6 +93,9 @@ fun generateTip(userId: String) {
             Log.e("NutriCoachVM", "AI generation failed", e)
             _genTip.value = "Failed to fetch tip: ${e.localizedMessage}"
         }
+        finally {
+            _loading.value = false
+        }
     }
 }
 
@@ -101,8 +108,8 @@ fun generateTip(userId: String) {
     fun checkFruitOptimal(userId: String) {
         viewModelScope.launch {
             val user = homeRepo.getUserById(userId)
-            val optimal = (user?.fruitServeSize ?: 0.0) >= 1 && // TODO: more than the average, or equal to max?
-                    (user?.fruitVariationScore ?: 0.0) >= 1
+            val optimal = (user?.fruitServeSize ?: 0.0) >= 2 &&
+                    (user?.fruitVariationScore ?: 0.0) >= 5
             _isFruitOptimal.value = optimal
         }
     }

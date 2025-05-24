@@ -39,21 +39,21 @@ class SettingsViewModel(
 
         val user = dao.getUserById(userId) ?: return false
 
-        // 1) Build updated entity and save
+        //  Build updated entity and save
         val updated = user.copy(
             name         = newName,
             phoneNumber  = newPhone
         )
         dao.insertUsers(listOf(updated))
 
-        // 2) Refresh state flows
+        //  Refresh state flows
         _name.value  = updated.name ?: updated.userId
         _phone.value = updated.phoneNumber
 
         return true
     }
 
-    /** Returns true if update succeeded (password matched), false otherwise */
+    //  Returns true if update succeeded (password matched), false otherwise
     suspend fun updateProfile(
         currentPass: String,
         newName:     String,
@@ -61,13 +61,13 @@ class SettingsViewModel(
         newPass:     String
     ): Boolean {
         val user = dao.getUserById(userId) ?: return false
-        // 1) Validate current password
+        //  Validate current password
         if (user.passwordHash != currentPass.sha256()) return false
 
-        // 2) Determine new password hash (keep old if newPass blank)
+        //  Determine new password hash (keep old if newPass blank)
         val newHash = if (newPass.isNotBlank()) newPass.sha256() else user.passwordHash
 
-        // 3) Build updated entity and save
+        //  Build updated entity and save
         val updated = user.copy(
             name         = newName,
             phoneNumber  = newPhone,

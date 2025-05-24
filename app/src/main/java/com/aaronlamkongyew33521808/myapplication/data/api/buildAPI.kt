@@ -14,7 +14,7 @@ object buildAPI {
             .build()
     }
 
-    // 2) and your API interface
+    // 2) and API interface
     val fruityApi: FruityViceApi by lazy {
         retrofit.create(FruityViceApi::class.java)
     }

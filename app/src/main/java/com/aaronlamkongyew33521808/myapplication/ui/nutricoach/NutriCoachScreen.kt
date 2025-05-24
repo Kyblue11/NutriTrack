@@ -2,25 +2,40 @@ package com.aaronlamkongyew33521808.myapplication.ui.nutricoach
 
 import android.app.Application
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -33,7 +48,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -72,6 +89,8 @@ fun NutriCoachScreen(
     val isOptimal by viewModel.isFruitOptimal.collectAsState()
     val randomImageUrl by viewModel.randomImageUrl.collectAsState()
 
+    val loading   by viewModel.loading.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.fetchFruits()
         viewModel.loadTipHistory(userId)
@@ -104,125 +123,146 @@ fun NutriCoachScreen(
         bottomBar = { BottomBar(navController, userId, screenWidth, screenHeight) }
 
     ) { padding ->
-        LazyColumn(
+        Column(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding((screenWidth * 0.04).dp)
         ) {
-            item {
-
-                if (isOptimal == false || isOptimal == null) {
-                    Text(
-                        "Fruit Name",
-                        fontSize = (screenWidth * 0.04).sp
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isOptimal == true) {
+                    AsyncImage(
+                        model = randomImageUrl,
+                        contentDescription = "Motivational",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height((screenHeight * 0.4).dp),
+                        contentScale = ContentScale.Crop
                     )
-                    TextField(
-                        value = fruitQuery,
-                        onValueChange = { fruitQuery = it },
-                        label = { Text("e.g. banana", fontSize = (screenWidth * 0.035).sp,
-                            modifier = Modifier.padding(vertical = (screenHeight * 0.01).dp)) },
-                        singleLine = true
-                    )
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = fruitQuery,
+                            onValueChange = { fruitQuery = it },
+                            label = { Text("Search fruit…") },
+                            singleLine = true,
+                            trailingIcon = {
+                                IconButton(onClick = {
+                                    filtered = fruits.filter {
+                                        it.name.equals(fruitQuery.trim(), ignoreCase = true)
+                                    }
+                                }) {
+                                    Icon(Icons.Default.Search, null)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    Spacer(Modifier.height((screenHeight * 0.01).dp))
+                        Spacer(Modifier.height(16.dp))
 
-                    Button(onClick = {
-                        filtered = fruits.filter {
-                            it.name.contains(fruitQuery.trim(), ignoreCase = true) &&
-                                    fruitQuery.trim().length == it.name.length
-                        }
-                    }) {
-                        Text("Details", fontSize = (screenWidth * 0.03).sp)
-                    }
+                        if (filtered.isNotEmpty()) {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(filtered) { fruit ->
+                                    ElevatedCard(
+                                        modifier = Modifier
+                                            .width(200.dp)
+                                            .height(180.dp),
+                                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+                                    ) {
+                                        Column(
+                                            Modifier
+                                                .padding(12.dp)
+                                                .fillMaxSize(),
+                                            verticalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(fruit.name, fontWeight = FontWeight.Bold)
+                                            Text("Family: ${fruit.family}", style = MaterialTheme.typography.bodySmall)
 
-                    if (filtered.isNotEmpty()) {
-                        Spacer(Modifier.height((screenHeight * 0.02).dp))
-
-                        filtered.forEach { fruit ->
-                            Card(modifier = Modifier.padding((screenWidth * 0.03).dp)) {
-                                Column {
-                                    Text(fruit.name, fontWeight = FontWeight.Bold, fontSize = (screenWidth * 0.04).sp)
-                                    Text("family: ${fruit.family}", fontSize = (screenWidth * 0.035).sp)
-                                    Text("Calories: ${fruit.nutritions.calories}", fontSize = (screenWidth * 0.035).sp)
-                                    Text("Fat: ${fruit.nutritions.fat}", fontSize = (screenWidth * 0.035).sp)
-                                    Text("Sugar: ${fruit.nutritions.sugar}", fontSize = (screenWidth * 0.035).sp)
-                                    Text("Carbohydrates: ${fruit.nutritions.carbohydrates}", fontSize = (screenWidth * 0.035).sp)
-                                    Text("Protein: ${fruit.nutritions.protein}", fontSize = (screenWidth * 0.035).sp)
+                                            // now show all nutritional fields in two columns:
+                                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                                Column {
+                                                    Text("Cal: ${fruit.nutritions.calories}", style = MaterialTheme.typography.bodySmall)
+                                                    Text("Fat: ${fruit.nutritions.fat}", style = MaterialTheme.typography.bodySmall)
+                                                    Text("Sugar: ${fruit.nutritions.sugar}", style = MaterialTheme.typography.bodySmall)
+                                                }
+                                                Column {
+                                                    Text("Carbs: ${fruit.nutritions.carbohydrates}", style = MaterialTheme.typography.bodySmall)
+                                                    Text("Prot: ${fruit.nutritions.protein}", style = MaterialTheme.typography.bodySmall)
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                } else {
-                    Text(
-                        "You are doing great! Here's a motivational picture.",
-                        fontSize = (screenWidth * 0.035).sp
-                    )
-                    AsyncImage(
-                        model = randomImageUrl,
-                        contentDescription = "random pic",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height((screenHeight * 0.4).dp)
-                    )
                 }
+            }
+            Divider()
 
-//                Spacer(Modifier.height((screenHeight * 0.01).dp))
-                Divider(modifier = Modifier.padding(vertical = (screenHeight * 0.02).dp))
 
-                Text(
-                    "AI Motivational Tip",
-                    fontSize = (screenWidth * 0.045).sp
-                )
-                Spacer(Modifier.height((screenHeight * 0.03).dp))
+            Divider()
+
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text("AI Motivational Tip", style = MaterialTheme.typography.titleMedium)
 
                 genTip?.let {
-                    Card(modifier = Modifier.padding((screenWidth * 0.02).dp)) {
-                        Text(
-                            it,
-                            Modifier.padding((screenWidth * 0.02).dp),
-                            fontSize = (screenWidth * 0.04).sp,
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                lineHeight = (screenWidth * 0.05).sp
-                            )
-                        )                    }
+                    Card(
+                        Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                    ) {
+                        Text(it, Modifier.padding(12.dp))
+                    }
                 }
 
-                Button(onClick = {
-                    viewModel.generateTip(userId)
-                }) {
-                    Text("Get AI Tip", fontSize = (screenWidth * 0.03).sp)
-                }
-
-                Spacer(Modifier.height((screenHeight * 0.01).dp))
-
-                Button(onClick = { showTipsDialog = true }) {
-                    Text("Show All Tips", fontSize = (screenWidth * 0.03).sp)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(onClick = {
+                        viewModel.generateTip(userId);
+                    },
+                        enabled = !loading
+                    ) {
+                        Text(if (loading)"Analysing your health…" else "Get personalised AI Tip")
+                    }
+                    TextButton(onClick = { showTipsDialog = true }) {
+                        Text("Show All Tips")
+                    }
                 }
 
                 if (showTipsDialog) {
                     AlertDialog(
                         onDismissRequest = { showTipsDialog = false },
-                        title = { Text("AI Tip History", fontSize = (screenWidth * 0.045).sp) },
+                        title = { Text("AI Tip History") },
                         text = {
-                            LazyColumn {
+                            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 items(tips) { tip ->
-                                    Card(modifier = Modifier.padding((screenWidth * 0.02).dp)) {
-                                        Text(
-                                            tip.tip,
-                                            Modifier.padding((screenWidth * 0.02).dp),
-                                            fontSize = (screenWidth * 0.04).sp,
-                                            style = MaterialTheme.typography.bodyMedium.copy(
-                                                lineHeight = (screenWidth * 0.05).sp
-                                            )
-                                        )
+                                    Card(Modifier.fillMaxWidth()) {
+                                        Text(tip.tip, Modifier.padding(8.dp))
                                     }
                                 }
                             }
                         },
                         confirmButton = {
                             TextButton(onClick = { showTipsDialog = false }) {
-                                Text("Close", fontSize = (screenWidth * 0.04).sp)
+                                Text("Close")
                             }
                         }
                     )

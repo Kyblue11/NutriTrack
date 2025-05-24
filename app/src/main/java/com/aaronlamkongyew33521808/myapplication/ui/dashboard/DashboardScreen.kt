@@ -164,7 +164,7 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height((screenHeight * 0.02).dp))
 
             Text(
-                text = "Timings",
+                text = "Timings (Fill in all 3)",
                 style = TextStyle(fontSize = (screenWidth * 0.04).sp),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -191,7 +191,7 @@ fun DashboardScreen(
                     Text(text = "Save", fontSize = (screenWidth * 0.04).sp)
                 } else {
                     Text(
-                        text = "Please select valid options",
+                        text = "Each section must have at least 1 selection",
                         fontSize = (screenWidth * 0.04).sp,
                         color = MaterialTheme.colorScheme.error
                     )

@@ -32,7 +32,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         _userId.value = user?.userId ?: "Guest"
         _userName.value = user?.name ?: "Guest"
         _foodQualityScore.value =
-            user?.HEIFAtotalscore ?: 5.47 // placeholder (avg)
+            user?.HEIFAtotalscore ?: 54.7 // placeholder (avg)
 
     }
 }

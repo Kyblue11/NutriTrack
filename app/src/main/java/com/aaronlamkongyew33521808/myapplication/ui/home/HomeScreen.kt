@@ -3,6 +3,8 @@ package com.aaronlamkongyew33521808.myapplication.ui.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -29,6 +31,7 @@ fun HomeScreen(
     userId: String,
     onEditClick: () -> Unit,
     onInsights: () -> Unit,
+    onMenuClick: () -> Unit,
     viewModel: HomeViewModel = viewModel(),
     navController: NavHostController
 ) {
@@ -55,10 +58,13 @@ fun HomeScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = {
+                        onMenuClick()
+                    }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Menu,
-                            contentDescription = "HamburgerMenu"
+                            contentDescription = "DrawerMenu"
                         )
                     }
                 },
@@ -67,14 +73,15 @@ fun HomeScreen(
         },
         bottomBar = { BottomBar(navController, userId, screenWidth, screenHeight) }
     ) { padding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding((screenWidth * 0.04).dp),
             verticalArrangement = Arrangement.Top
         ) {
-            item {
+//            item {
                 // Greeting Section
                 Text(
                     text = "Hello,",
@@ -175,7 +182,7 @@ fun HomeScreen(
                     fontSize = (screenWidth * 0.04).sp,
                     textAlign = TextAlign.Justify
                 )
-            }
+//            }
         }
     }
 }
