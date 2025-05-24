@@ -29,7 +29,7 @@ fun DrawerLayout(
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    // 1) keep drawerState & scope here once for the whole app
+    // keep drawerState & scope here once for the whole app!
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope       = rememberCoroutineScope()
 
@@ -78,11 +78,11 @@ fun DrawerLayout(
                         navController.navigate(Routes.StatsCombined.replace("{userId}", id))
                     }
                 )
-                // …etc
+
             }
         }
     ) {
-        // 2) now wrap all app’s content, passing in how to open drawer
+        //  now wrap all app’s content, passing in how to open drawer
         content {
             scope.launch { drawerState.open() }
         }

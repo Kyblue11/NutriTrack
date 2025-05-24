@@ -20,6 +20,9 @@ class ClinicianKeyViewModel(
             if (existing != null) {
                 _key.value = existing
             } else {
+                // we still need someplace to insert the key initially, so i put it here instead of the UI component
+                // after the first run, this will not be called again,
+                // and we can safely assume that we have "removed" the default key from our code
                 val default = "dollar-entry-apples"
                 repo.saveKey(default)
                 _key.value = default

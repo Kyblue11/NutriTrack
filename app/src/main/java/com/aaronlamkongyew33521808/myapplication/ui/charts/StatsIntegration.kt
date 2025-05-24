@@ -184,9 +184,6 @@ fun ChartBar(
     }
 }
 
-
-
-
 @Composable
 fun ChartScatter(
     points: List<Pair<Double, Double>>,

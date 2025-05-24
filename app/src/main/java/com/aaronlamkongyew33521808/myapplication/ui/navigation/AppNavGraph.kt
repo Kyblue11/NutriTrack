@@ -105,8 +105,8 @@ DrawerLayout(navController = navController, userId = currentUser) { openDrawer -
                             popUpTo(Routes.Launcher) { inclusive = true }
                         }
 
-                    else /* logged in & questionnaire done */ -> {
-                        // prefer lastRoute if it exists and matches one of our routes:
+                    // logged in & questionnaire done
+                    else   -> {
                         val start = lastRoutePref
                             ?.takeIf { it.startsWith("home/") ||
                                     it.startsWith("insights/") ||
