@@ -113,7 +113,6 @@ class ClinicianViewModel(private val dao: UserDao) : ViewModel() {
     fun findPatterns() = viewModelScope.launch(Dispatchers.IO) {
         _loading.value = true
         try {
-            // build a prompt including your averages or sample data
             val prompt = buildString {
                 append("I have a dataset of HEIFA scores for both male and female users. ")
                 append("Average total HEIFA scores for male: ${_avgMale.value}, female: ${_avgFemale.value}. ")
@@ -127,13 +126,11 @@ class ClinicianViewModel(private val dao: UserDao) : ViewModel() {
                 append("Do not output any formalities (e.g. Here are the patterns I found), just the actual 3 sentences themselves, separated by new lines.")
             }
 
-            // call your GenerativeModel (e.g. Gemini client)
             val model = GenerativeModel(
                 modelName = "gemini-1.5-flash",
                 apiKey    = BuildConfig.apiKey
             )
             val resp = model.generateContent(prompt)
-            // split into three lines (or however your model returns)
             val lines = resp.text?.split("\n")?.filter { it.isNotBlank() } ?: listOf("No insight.")
             _insights.value = lines.take(3)
         } catch (e: Exception) {
