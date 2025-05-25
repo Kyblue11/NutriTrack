@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -85,15 +86,15 @@ fun NutriCoachScreen(
     var fruitQuery by rememberSaveable { mutableStateOf("") }
     var showTipsDialog by rememberSaveable { mutableStateOf(false) }
 
-    val result     by viewModel.searchResult.collectAsState()
-    val error      by viewModel.errorMessage.collectAsState()
+    val result by viewModel.searchResult.collectAsState()
+    val error by viewModel.errorMessage.collectAsState()
 
     var filtered by rememberSaveable { mutableStateOf<List<Fruit>>(emptyList()) }
 
     val isOptimal by viewModel.isFruitOptimal.collectAsState()
     val randomImageUrl by viewModel.randomImageUrl.collectAsState()
 
-    val loading   by viewModel.loading.collectAsState()
+    val loading by viewModel.loading.collectAsState()
     val loadingfruit by viewModel.loadingfruit.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -132,14 +133,15 @@ fun NutriCoachScreen(
             Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding((screenWidth * 0.04).dp)
         ) {
-            Box(
+            Column(
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .weight(1f) // Now applied in a valid context
                     .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
                 if (isOptimal == true) {
                     AsyncImage(
@@ -170,7 +172,7 @@ fun NutriCoachScreen(
                                     Icon(Icons.Default.Search, contentDescription = "Search")
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         )
 
                         if (loadingfruit) {
@@ -183,7 +185,7 @@ fun NutriCoachScreen(
                             } else {
                                 emptyList()
                             }
-                        };
+                        }
 
                         Spacer(Modifier.height(16.dp))
 
@@ -195,28 +197,55 @@ fun NutriCoachScreen(
                                     ElevatedCard(
                                         modifier = Modifier
                                             .width(200.dp)
-                                            .height(180.dp),
-                                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+                                            .heightIn(min = 120.dp),
+                                        colors = CardDefaults.elevatedCardColors(
+                                            containerColor = MaterialTheme.colorScheme.surface
+                                        )
                                     ) {
                                         Column(
                                             Modifier
                                                 .padding(12.dp)
-                                                .fillMaxSize(),
-                                            verticalArrangement = Arrangement.SpaceBetween
+                                                .fillMaxWidth()
+                                                .verticalScroll(rememberScrollState()),
+                                            verticalArrangement = Arrangement.spacedBy(8.dp)
                                         ) {
                                             Text(fruit.name, fontWeight = FontWeight.Bold)
-                                            Text("Family: ${fruit.family}", style = MaterialTheme.typography.bodySmall)
+                                            Text(
+                                                "Family: ${fruit.family}",
+                                                style = MaterialTheme.typography.bodySmall
+                                            )
 
-                                            // now show all nutritional fields in two columns:
-                                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                                Column {
-                                                    Text("Cal: ${fruit.nutritions.calories}", style = MaterialTheme.typography.bodySmall)
-                                                    Text("Fat: ${fruit.nutritions.fat}", style = MaterialTheme.typography.bodySmall)
-                                                    Text("Sugar: ${fruit.nutritions.sugar}", style = MaterialTheme.typography.bodySmall)
+                                            Row(
+                                                Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                Column(
+                                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Text(
+                                                        "Cal: ${fruit.nutritions.calories}",
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                    Text(
+                                                        "Fat: ${fruit.nutritions.fat}",
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                    Text(
+                                                        "Sugar: ${fruit.nutritions.sugar}",
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
                                                 }
-                                                Column {
-                                                    Text("Carbs: ${fruit.nutritions.carbohydrates}", style = MaterialTheme.typography.bodySmall)
-                                                    Text("Prot: ${fruit.nutritions.protein}", style = MaterialTheme.typography.bodySmall)
+                                                Column(
+                                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Text(
+                                                        "Carbs: ${fruit.nutritions.carbohydrates}",
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                    Text(
+                                                        "Prot: ${fruit.nutritions.protein}",
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
                                                 }
                                             }
                                         }
@@ -227,62 +256,70 @@ fun NutriCoachScreen(
                     }
                 }
             }
-            Divider()
-
 
             Divider()
 
-            Column(
+            Box(
                 Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("AI Motivational Tip", style = MaterialTheme.typography.titleMedium)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        "AI Motivational Tip",
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
-                genTip?.let {
-                    Card(
-                        Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-                    ) {
-                        Text(it, Modifier.padding(12.dp))
+                    genTip?.let {
+                        Card(
+                            Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                        ) {
+                            Text(it, Modifier.padding(12.dp))
+                        }
                     }
-                }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = {
-                        viewModel.generateTip(userId);
-                    },
-                        enabled = !loading
-                    ) {
-                        Text(if (loading)"Analysing your health…" else "Get personalised AI Tip")
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(
+                            onClick = {
+                                viewModel.generateTip(userId)
+                            },
+                            enabled = !loading
+                        ) {
+                            Text(if (loading) "Analysing your health…" else "Get personalised AI Tip")
+                        }
+                        TextButton(onClick = { showTipsDialog = true }) {
+                            Text("Show All Tips")
+                        }
                     }
-                    TextButton(onClick = { showTipsDialog = true }) {
-                        Text("Show All Tips")
-                    }
-                }
 
-                if (showTipsDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showTipsDialog = false },
-                        title = { Text("AI Tip History") },
-                        text = {
-                            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                items(tips) { tip ->
-                                    Card(Modifier.fillMaxWidth()) {
-                                        Text(tip.tip, Modifier.padding(8.dp))
+                    if (showTipsDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showTipsDialog = false },
+                            title = { Text("AI Tip History") },
+                            text = {
+                                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    items(tips) { tip ->
+                                        Card(Modifier.fillMaxWidth()) {
+                                            Text(tip.tip, Modifier.padding(8.dp))
+                                        }
                                     }
                                 }
+                            },
+                            confirmButton = {
+                                TextButton(onClick = { showTipsDialog = false }) {
+                                    Text("Close")
+                                }
                             }
-                        },
-                        confirmButton = {
-                            TextButton(onClick = { showTipsDialog = false }) {
-                                Text("Close")
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
     }
 }
+

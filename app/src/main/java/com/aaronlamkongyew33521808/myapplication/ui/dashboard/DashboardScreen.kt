@@ -33,7 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 fun DashboardScreen(
     userId: String,
     navController: NavController,
-    vm: QuestionnaireViewModel = viewModel()
+    vm: QuestionnaireViewModel = viewModel(),
+    onBackToLogin :() -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
@@ -85,10 +86,7 @@ fun DashboardScreen(
                 title = { Text("Food Intake Questionnaire", fontSize = (screenWidth * 0.05).sp) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        // also intercept the arrow
-                        navController.navigate(Routes.Login) {
-                            popUpTo(Routes.Login) { inclusive = false }
-                        }
+                        onBackToLogin()
                     }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back")

@@ -170,7 +170,15 @@ DrawerLayout(navController = navController, userId = currentUser) { openDrawer -
                 val userId = backStackEntry.arguments?.getString("userId") ?: ""
                 DashboardScreen(
                     userId = userId,
-                    navController = navController
+                    navController = navController,
+                    onBackToLogin = {
+                        AuthManager.logout(context)
+                        navController.navigate(Routes.Login) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                            restoreState      = false
+                        }
+                    },
                 )
             }
 
@@ -285,9 +293,12 @@ DrawerLayout(navController = navController, userId = currentUser) { openDrawer -
                     viewModel = vm,
                     keyViewModel = keyVm,
                     onLogout = {
-                        // clear any session if you have one, then:
+                        // clear any session
+                        AuthManager.logout(context)
                         navController.navigate(Routes.Login) {
-                            popUpTo(Routes.Welcome) { inclusive = false }
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                            restoreState      = false
                         }
                     },
                     onClinician = {

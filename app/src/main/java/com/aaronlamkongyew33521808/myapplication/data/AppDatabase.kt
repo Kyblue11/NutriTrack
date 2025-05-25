@@ -15,7 +15,7 @@ import com.aaronlamkongyew33521808.myapplication.data.entity.UserEntity
 
 @Database(
     entities = [UserEntity::class, QuestionnaireEntity::class, NutriCoachTip::class, ClinicianKeyEntity::class],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

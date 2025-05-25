@@ -307,7 +307,7 @@ fun ScoreRowWithSlider(
         if (!isTotalScore) {
             Text(
                 text = "${"%.1f".format(score)}/${"%.0f".format(maxScore)}",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 modifier = Modifier.width(scoreTextWidth), // Fixed width ensures alignment
 

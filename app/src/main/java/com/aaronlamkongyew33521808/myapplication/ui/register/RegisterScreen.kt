@@ -12,11 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aaronlamkongyew33521808.myapplication.R
 import com.aaronlamkongyew33521808.myapplication.viewmodel.RegisterViewModel
 
 import java.util.regex.Pattern
@@ -41,6 +44,10 @@ fun RegisterScreen(
     var name by rememberSaveable { mutableStateOf("") }
     var pass by rememberSaveable { mutableStateOf("") }
     var confirm by rememberSaveable { mutableStateOf("") }
+
+    var phoneVisible   by rememberSaveable { mutableStateOf(false) }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    var confirmVisible  by rememberSaveable { mutableStateOf(false) }
 
     // track whether they've attempted verify
     var triedVerify by remember { mutableStateOf(false) }
@@ -107,6 +114,15 @@ fun RegisterScreen(
                     singleLine = true,
                     label = { Text("Phone Number", fontSize = (screenWidth * 0.04).sp) },
                     placeholder = { Text("Enter your registered number", fontSize = (screenWidth * 0.035).sp) },
+                    visualTransformation = if (phoneVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { phoneVisible = !phoneVisible }) {
+                            Icon(
+                                painter = painterResource(id = if (phoneVisible) R.drawable.eye_open else R.drawable.eye_close),
+                                contentDescription = if (phoneVisible) "Hide password" else "Show password"
+                            )
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -145,7 +161,15 @@ fun RegisterScreen(
                     onValueChange = { pass = it },
                     label = { Text("Password", fontSize = (screenWidth * 0.04).sp) },
                     placeholder = { Text("Enter a new password", fontSize = (screenWidth * 0.035).sp) },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                painter = painterResource(id = if (passwordVisible) R.drawable.eye_open else R.drawable.eye_close),
+                                contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                            )
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -154,7 +178,15 @@ fun RegisterScreen(
                     value = confirm,
                     onValueChange = { confirm = it },
                     label = { Text("Confirm Password", fontSize = (screenWidth * 0.04).sp) },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { confirmVisible = !confirmVisible }) {
+                            Icon(
+                                painter = painterResource(id = if (confirmVisible) R.drawable.eye_open else R.drawable.eye_close),
+                                contentDescription = if (confirmVisible) "Hide password" else "Show password"
+                            )
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
