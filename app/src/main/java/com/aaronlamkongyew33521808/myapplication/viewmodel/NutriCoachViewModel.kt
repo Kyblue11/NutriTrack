@@ -42,8 +42,17 @@ class NutriCoachViewModel(
     private val _randomImageUrl = MutableStateFlow(generateRandomImageUrl())
     val randomImageUrl: StateFlow<String> = _randomImageUrl
 
+    private val _loadingfruit   = MutableStateFlow(false)
+    val loadingfruit: StateFlow<Boolean> = _loadingfruit
+
     private val _loading   = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
+
+    private val _searchResult = MutableStateFlow<Fruit?>(null)
+    val searchResult: StateFlow<Fruit?> = _searchResult
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
 
     private fun generateRandomImageUrl(): String {
         return "https://picsum.photos/400?random=${System.currentTimeMillis()}"
@@ -53,8 +62,24 @@ class NutriCoachViewModel(
         try {
             _fruits.value = repo.fetchFruits()
         } catch (e: Exception) {
-            _fruits.value = emptyList() // Handle error gracefully
+            _fruits.value = emptyList()
             e.printStackTrace()
+        }
+    }
+
+    fun searchFruit(name: String) {
+        viewModelScope.launch {
+            _loadingfruit.value = true
+            try {
+                val fruit = repo.fetchFruit(name.trim())
+                _searchResult.value = fruit
+                _errorMessage.value = null
+            } catch (e: Exception) {
+                _searchResult.value = null
+                _errorMessage.value = "Could not find fruit: \"$name\""
+            } finally {
+                _loadingfruit.value = false
+            }
         }
     }
 

@@ -10,6 +10,10 @@ class NutriCoachRepository(
     private val dao: NutriCoachDao
 ) {
     suspend fun fetchFruits(): List<Fruit> = fruitApi.getAllFruits()
+
+    suspend fun fetchFruit(name: String): Fruit =
+        fruitApi.getFruit(name)
+
     suspend fun saveTip(tip: NutriCoachTip) = dao.insertTip(tip)
     suspend fun getTips(userId: String): List<NutriCoachTip> = dao.getTipsForUser(userId)
 }

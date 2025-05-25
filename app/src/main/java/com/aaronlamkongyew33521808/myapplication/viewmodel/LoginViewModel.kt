@@ -36,7 +36,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun String.sha256(): String {
-        val md = MessageDigest.getInstance("SHA-256") // TODO: check whether can import this
+        val md = MessageDigest.getInstance("SHA-256")
         return md.digest(this.toByteArray())
             .joinToString("") { "%02x".format(it) }
     }

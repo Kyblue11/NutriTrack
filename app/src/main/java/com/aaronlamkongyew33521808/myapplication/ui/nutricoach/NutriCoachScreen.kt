@@ -27,6 +27,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,12 +85,16 @@ fun NutriCoachScreen(
     var fruitQuery by rememberSaveable { mutableStateOf("") }
     var showTipsDialog by rememberSaveable { mutableStateOf(false) }
 
+    val result     by viewModel.searchResult.collectAsState()
+    val error      by viewModel.errorMessage.collectAsState()
+
     var filtered by rememberSaveable { mutableStateOf<List<Fruit>>(emptyList()) }
 
     val isOptimal by viewModel.isFruitOptimal.collectAsState()
     val randomImageUrl by viewModel.randomImageUrl.collectAsState()
 
     val loading   by viewModel.loading.collectAsState()
+    val loadingfruit by viewModel.loadingfruit.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.fetchFruits()
@@ -160,15 +165,25 @@ fun NutriCoachScreen(
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(onClick = {
-                                    filtered = fruits.filter {
-                                        it.name.equals(fruitQuery.trim(), ignoreCase = true)
-                                    }
+                                    viewModel.searchFruit(fruitQuery)
                                 }) {
-                                    Icon(Icons.Default.Search, null)
+                                    Icon(Icons.Default.Search, contentDescription = "Search")
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
+
+                        if (loadingfruit) {
+                            CircularProgressIndicator()
+                        } else if (error != null) {
+                            Text(error!!, color = MaterialTheme.colorScheme.error)
+                        } else if (result != null) {
+                            filtered = if (result != null) {
+                                listOf(result!!)
+                            } else {
+                                emptyList()
+                            }
+                        };
 
                         Spacer(Modifier.height(16.dp))
 

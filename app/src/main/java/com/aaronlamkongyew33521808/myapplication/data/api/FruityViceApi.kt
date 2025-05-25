@@ -1,6 +1,7 @@
 package com.aaronlamkongyew33521808.myapplication.data.api
 
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface FruityViceApi {
     @GET("api/fruit/all")
@@ -12,4 +13,10 @@ interface FruityViceApi {
 // Since the total number of fruits is small, it is okay to get all fruits at once!
 
 // Also, the `/all` call solves the problem of the space bar " " API problem for fruits like "horned melon"
+
+    @GET("api/fruit/{name}")
+    suspend fun getFruit(
+        @Path("name") name: String
+    ): Fruit
+
 }

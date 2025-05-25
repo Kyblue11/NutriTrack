@@ -75,7 +75,7 @@ class SettingsViewModel(
         )
         dao.insertUsers(listOf(updated))
 
-        // 4) Refresh state flows
+        // refresh state flows
         _name.value  = updated.name ?: updated.userId
         _phone.value = updated.phoneNumber
 

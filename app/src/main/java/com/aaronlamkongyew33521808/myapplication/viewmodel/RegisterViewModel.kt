@@ -14,11 +14,11 @@ import java.security.MessageDigest
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
     private val repo = AuthRepository(AppDatabase.getDatabase(application).userDao())
 
-    // expose all pre-registered IDs for dropdown
+    //  all pre-registered IDs for dropdown
     private val _userIds = MutableStateFlow<List<String>>(emptyList())
     val userIds: StateFlow<List<String>> get() = _userIds
 
-    // can the user claim this ID+phone? null = not yet verified, true = valid, false = invalid
+    // can the user claim this ID+phone?
     private val _canClaim = MutableStateFlow<Boolean?>(null)
     val canClaim: StateFlow<Boolean?> get() = _canClaim
 
@@ -34,17 +34,14 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    /** Reset verification state */
     fun resetCanClaim() {
         _canClaim.value = null
     }
 
-    /** Verify ID + phone against pre-registered data */
     fun verifyIdPhone(userId: String, phone: String) = viewModelScope.launch {
         _canClaim.value = repo.getRawUser(userId, phone) != null
     }
 
-    /** Claim account: set name + password */
     fun claimAccount(userId: String, phone: String, name: String, password: String) = viewModelScope.launch {
         val hash = password.sha256()
         _claimResult.value = repo.claimAccount(userId, phone, name, hash)

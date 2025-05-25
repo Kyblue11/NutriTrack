@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-//In this case, using AndroidViewModel(application: Application) is appropriate and simple because:
+//In this case, using AndroidViewModel(application: Application) should be appropriate and simple because:
 //The only dependency needed is the Application context, which is used to get the database singleton.
 //No other dependency injections (like repositories or DAOs) are injected from outside.
 //I do not need to pass custom parameters to the ViewModel!
