@@ -7,6 +7,8 @@ plugins {
 
 }
 
+val apiKey: String = project.findProperty("API_KEY").toString()
+
 android {
     namespace = "com.aaronlamkongyew33521808.myapplication"
     compileSdk = 35
@@ -23,10 +25,10 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField ("String", "apiKey", "\"AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE\"")
+            buildConfigField ("String", "apiKey", "\"$apiKey\"")
         }
         release {
-            buildConfigField ("String", "apiKey", "\"AIzaSyDD-irqROmXNTzOwcvrH4P-QcQald2prhE\"")
+            buildConfigField ("String", "apiKey", "\"$apiKey\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -51,6 +53,7 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.runtime.livedata)
+//    implementation(libs.generativeai)
     // TODO: check ksp version with toml
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
