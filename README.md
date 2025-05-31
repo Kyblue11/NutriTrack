@@ -2,6 +2,16 @@
 
 NutriTrack is an Android application designed to help users track and improve their dietary habits using the HEIFA scoring system. It provides personalized nutrition tips, tracks user progress, and offers insights for both users and clinicians.
 
+<table border="0">
+  <tr>
+    <td><img src="./home.png" width="200"/></td>
+         <td><img src="./insights.png" width="200"/></td>
+             <td><img src="./AI.png" width="200"/></td>
+                 <td><img src="./stats.png" width="200"/></td>
+  </tr>
+</table>
+
+
 ## Features
 
 - **User Authentication:** Secure login and registration with password hashing.
@@ -45,9 +55,11 @@ NutriTrack is an Android application designed to help users track and improve th
     ```
 
 **Notes**
+
 The app uses a local Room database, prepopulated from participantData.csv in the assets folder.
 The local.properties file is ignored by Git for security.
 The AI features require a valid API key for the generative AI service.
 
 **License**
+
 This project is for educational purposes.
